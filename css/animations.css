@@ -1,0 +1,111 @@
+/* ============================================================
+   FAMILYFLOW — ANIMATIONS
+   ============================================================ */
+
+/* ---- Keyframes ---- */
+@keyframes fadeIn      { from { opacity:0 } to { opacity:1 } }
+@keyframes slideUp     { from { transform:translateY(24px); opacity:0 } to { transform:translateY(0); opacity:1 } }
+@keyframes slideDown   { from { transform:translateY(-20px); opacity:0 } to { transform:translateY(0); opacity:1 } }
+@keyframes scaleIn     { from { transform:scale(0.9); opacity:0 } to { transform:scale(1); opacity:1 } }
+@keyframes pulse-ring  {
+  0%   { transform:scale(1);    opacity:0.6 }
+  100% { transform:scale(1.5);  opacity:0 }
+}
+@keyframes shimmer {
+  0%   { background-position:-200% 0 }
+  100% { background-position:200%  0 }
+}
+@keyframes float {
+  0%,100% { transform:translateY(0) }
+  50%      { transform:translateY(-6px) }
+}
+@keyframes spin {
+  to { transform:rotate(360deg) }
+}
+@keyframes bounce-in {
+  0%   { transform:scale(0.3); opacity:0 }
+  50%  { transform:scale(1.1) }
+  70%  { transform:scale(0.9) }
+  100% { transform:scale(1);   opacity:1 }
+}
+
+/* ---- Utility classes ---- */
+.animate-fade-in  { animation: fadeIn  300ms ease both }
+.animate-slide-up { animation: slideUp 350ms ease both }
+.animate-scale-in { animation: scaleIn 250ms cubic-bezier(0.34,1.56,0.64,1) both }
+.animate-float    { animation: float 3s ease-in-out infinite }
+.animate-spin     { animation: spin 1s linear infinite }
+
+/* Stagger children */
+.stagger > * {
+  animation: slideUp 400ms ease both;
+}
+.stagger > *:nth-child(1) { animation-delay: 0ms }
+.stagger > *:nth-child(2) { animation-delay: 60ms }
+.stagger > *:nth-child(3) { animation-delay: 120ms }
+.stagger > *:nth-child(4) { animation-delay: 180ms }
+.stagger > *:nth-child(5) { animation-delay: 240ms }
+.stagger > *:nth-child(6) { animation-delay: 300ms }
+
+/* ---- Skeleton loading ---- */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-card) 25%,
+    var(--bg-card-hover) 50%,
+    var(--bg-card) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+.skeleton-text  { height: 14px; width: 80%; }
+.skeleton-value { height: 36px; width: 60%; }
+
+/* ---- Toast ---- */
+.toast {
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border-left: 3px solid var(--accent);
+  box-shadow: var(--shadow-lg);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  transform: translateX(110%);
+  transition: transform 280ms cubic-bezier(0.34,1.56,0.64,1), opacity 280ms;
+  opacity: 0;
+  max-width: 320px;
+  width: max-content;
+}
+.toast--success { border-left-color: var(--income-color); }
+.toast--error   { border-left-color: var(--expense-color); }
+.toast--info    { border-left-color: var(--accent); }
+.toast--visible { transform: translateX(0); opacity: 1; }
+
+/* ---- Page transition ---- */
+.tab-panel {
+  display: none;
+  animation: fadeIn 220ms ease;
+}
+.tab-panel.active { display: block; }
+
+/* ---- Hover lift ---- */
+.hover-lift {
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-accent);
+}
+
+/* ---- Pulse ring (for FAB) ---- */
+.fab-pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--accent);
+  animation: pulse-ring 2s ease-out infinite;
+  pointer-events: none;
+}

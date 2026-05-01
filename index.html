@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="uk" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>FamilyFlow — Сімейний трекер витрат</title>
+  <meta name="description" content="Сімейний трекер витрат для Dmytro, Markian і Мами.">
+  <meta name="theme-color" content="#22C55E">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+
+  <style>
+    /* Inline critical: login visible by default before JS loads */
+    #loginScreen { display: flex; }
+    #appShell    { display: none; }
+  </style>
+</head>
+<body>
+
+<!-- ===================== TOAST ===================== -->
+<div id="toastContainer"></div>
+
+<!-- ===================== MODAL ===================== -->
+<div id="modalBackdrop" class="modal-backdrop" style="display:none" role="dialog" aria-modal="true">
+  <div class="modal-panel">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalTitle">Нова витрата</h2>
+      <button class="icon-btn" id="modalCloseBtn" aria-label="Закрити">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="modalCancelBtn">Скасувати</button>
+      <button class="btn btn-primary btn-full" id="modalSaveBtn">Зберегти</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== LOGIN SCREEN ===================== -->
+<div id="loginScreen">
+  <button class="login-lang-btn" id="loginLangToggle">🇩🇪 DE</button>
+
+  <div class="login-logo animate-float">💰</div>
+  <h1 class="login-title" id="loginTitle">FamilyFlow</h1>
+  <p class="login-subtitle" id="loginSubtitle">Вибери свій профіль</p>
+
+  <div class="login-profiles">
+    <button class="login-btn hover-lift" id="loginBtn1">
+      <span class="login-num">1</span>
+      <span class="login-avatar">👨</span>
+      <span class="login-name">Dmytro</span>
+    </button>
+    <button class="login-btn hover-lift" id="loginBtn2">
+      <span class="login-num">2</span>
+      <span class="login-avatar">👦</span>
+      <span class="login-name">Markian</span>
+    </button>
+    <button class="login-btn hover-lift" id="loginBtn3">
+      <span class="login-num">3</span>
+      <span class="login-avatar">👩</span>
+      <span class="login-name">Mama</span>
+    </button>
+  </div>
+</div>
+
+<!-- ===================== APP SHELL ===================== -->
+<div id="appShell">
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="header-logo">💰</div>
+      <span class="header-title">FamilyFlow</span>
+    </div>
+    <div class="header-right">
+      <button class="icon-btn" id="appLangToggle" title="Мова">🇩🇪 DE</button>
+      <button class="icon-btn" id="appThemeToggle" title="Тема">🌸</button>
+      <span class="header-avatar" id="headerAvatar" style="font-size:26px;cursor:pointer;line-height:1">👨</span>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <main class="app-content">
+
+    <!-- ======= HOME ======= -->
+    <div class="tab-panel active" data-panel="home">
+
+      <div class="month-nav">
+        <button class="month-nav-btn" id="prevMonth">‹</button>
+        <span class="month-label" id="monthLabel">Травень 2026</span>
+        <button class="month-nav-btn" id="nextMonth">›</button>
+      </div>
+
+      <p id="dashGreeting" style="font-size:var(--text-lg);font-weight:var(--fw-semibold);color:var(--text-secondary);margin-bottom:var(--space-4)">Привіт 👋</p>
+
+      <!-- Stats -->
+      <div class="stats-grid stagger">
+        <!-- Balance -->
+        <div class="card stat-card balance-hero">
+          <div class="stat-label" id="lbl_balance">Баланс</div>
+          <div class="stat-value" id="statBalance">— €</div>
+          <div class="balance-sub-row">
+            <div class="balance-sub-item">
+              <div class="balance-sub-dot" style="background:var(--income-color)"></div>
+              <span id="lbl_income">Дохід</span>: <strong id="statIncome" style="color:var(--income-color);margin-left:4px">0,00 €</strong>
+            </div>
+            <div class="balance-sub-item">
+              <div class="balance-sub-dot" style="background:var(--expense-color)"></div>
+              <span id="lbl_expense">Витрати</span>: <strong id="statExpense" style="color:var(--expense-color);margin-left:4px">0,00 €</strong>
+            </div>
+          </div>
+        </div>
+        <!-- Card -->
+        <div class="card stat-card hover-lift">
+          <div class="stat-card-icon stat-icon-card">💳</div>
+          <div class="stat-label" id="lbl_card">Картка</div>
+          <div class="stat-value" id="statCard">0,00 €</div>
+        </div>
+        <!-- Cash -->
+        <div class="card stat-card hover-lift">
+          <div class="stat-card-icon stat-icon-cash">💵</div>
+          <div class="stat-label" id="lbl_cash">Готівка</div>
+          <div class="stat-value" id="statCash">0,00 €</div>
+        </div>
+      </div>
+
+      <!-- Who spent -->
+      <div style="margin-top:var(--space-4)">
+        <div class="section-title"><span id="lbl_who_spent">Хто скільки витратив</span></div>
+        <div class="who-spent-grid" id="whoSpentContainer"></div>
+      </div>
+
+      <!-- Donut chart -->
+      <div class="chart-card card" style="margin-top:var(--space-4)">
+        <div class="chart-card-title">📊 <span id="lbl_by_category">За категоріями</span></div>
+        <div class="donut-wrap" style="height:200px;position:relative">
+          <canvas id="chartDonut" height="200"></canvas>
+          <div class="donut-center">
+            <div class="donut-center-value" id="donutTotalVal">0 €</div>
+            <div class="donut-center-label" id="lbl_expenses">Витрати</div>
+          </div>
+        </div>
+        <div id="donutEmpty" style="display:none;text-align:center;padding:var(--space-8);color:var(--text-muted)">📭 Ще немає витрат</div>
+        <div class="donut-legend" id="donutLegend"></div>
+      </div>
+
+      <!-- Recent transactions -->
+      <div style="margin-top:var(--space-4)">
+        <div class="section-title">
+          <span id="lbl_recent">Останні витрати</span>
+          <span class="section-title-action" id="seeAllBtn">Всі →</span>
+        </div>
+        <div id="recentList"></div>
+      </div>
+
+    </div><!-- /home -->
+
+    <!-- ======= HISTORY ======= -->
+    <div class="tab-panel" data-panel="history">
+
+      <div class="history-header">
+        <h2 style="font-size:var(--text-xl);font-weight:var(--fw-bold)" id="lbl_history_title">Всі транзакції</h2>
+        <span class="badge badge-gray"><span id="historyCount">0</span> записів</span>
+      </div>
+
+      <div class="filter-bar">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input class="search-input" type="search" id="historySearch" placeholder="Пошук...">
+        </div>
+        <div class="filter-chips" id="typeChips"></div>
+        <div class="filter-chips" id="userChips"></div>
+        <div class="date-filters">
+          <input type="date" class="date-filter-input" id="dateFrom">
+          <span style="color:var(--text-muted);flex-shrink:0">—</span>
+          <input type="date" class="date-filter-input" id="dateTo">
+          <button class="btn btn-secondary btn-sm" id="clearFilters">✕</button>
+        </div>
+      </div>
+
+      <div id="historyList"></div>
+
+    </div><!-- /history -->
+
+    <!-- ======= ANALYTICS ======= -->
+    <div class="tab-panel" data-panel="analytics">
+
+      <h2 style="font-size:var(--text-xl);font-weight:var(--fw-bold);margin-bottom:var(--space-5)" id="lbl_analytics_title">Аналіз витрат</h2>
+
+      <div class="analytics-grid">
+        <div class="chart-card card">
+          <div class="chart-card-title">👥 <span id="lbl_who_spent2">Хто скільки витратив</span></div>
+          <canvas id="chartMembers" height="180"></canvas>
+        </div>
+        <div class="chart-card card">
+          <div class="chart-card-title">📈 Тренд за 6 місяців</div>
+          <canvas id="chartTrend" height="200"></canvas>
+        </div>
+      </div>
+
+    </div><!-- /analytics -->
+
+    <!-- ======= SETTINGS ======= -->
+    <div class="tab-panel" data-panel="settings">
+
+      <h2 style="font-size:var(--text-xl);font-weight:var(--fw-bold);margin-bottom:var(--space-5)" id="lbl_settings_title">Налаштування</h2>
+
+      <!-- Profile -->
+      <div class="profile-card stagger">
+        <div class="profile-avatar" id="settingsAvatar">👨</div>
+        <div>
+          <div class="profile-name" id="settingsUserName">Dmytro</div>
+          <div class="profile-sub" id="lbl_profile">Профіль</div>
+          <button class="btn btn-secondary btn-sm" id="btnSwitchUser" style="margin-top:var(--space-3)">
+            🔄 <span id="lbl_switch_user">Змінити акаунт</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Theme -->
+      <div class="settings-group">
+        <div class="settings-group-title" id="lbl_theme">Тема</div>
+        <div class="theme-btns">
+          <button class="theme-option" id="btnThemeDark">
+            <div class="theme-option-preview theme-dark-preview">🌿</div>
+            <span id="lbl_theme_dark">Темна (зелена)</span>
+          </button>
+          <button class="theme-option" id="btnThemePink">
+            <div class="theme-option-preview theme-pink-preview">🌸</div>
+            <span id="lbl_theme_pink">Рожева</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Language -->
+      <div class="settings-group">
+        <div class="settings-group-title" id="lbl_language">Мова</div>
+        <div class="settings-row">
+          <div class="settings-row-icon" style="background:var(--accent-dim);color:var(--accent)">🌍</div>
+          <div class="settings-row-content">
+            <div class="settings-row-label">Мова / Sprache</div>
+          </div>
+          <button class="icon-btn" id="settingsLangToggle" style="width:auto;padding:6px 14px;font-size:var(--text-sm);font-weight:var(--fw-semibold)">🇺🇦 UA</button>
+        </div>
+      </div>
+
+      <!-- Income -->
+      <div class="settings-group">
+        <div class="settings-group-title" id="lbl_income_title">Мій дохід цього місяця</div>
+        <div class="income-inputs">
+          <div class="income-field">
+            <label id="lbl_income_card">По картці (€)</label>
+            <input type="number" id="settingsIncomeCard" step="0.01" min="0" placeholder="0.00">
+          </div>
+          <div class="income-field">
+            <label id="lbl_income_cash">Готівка (€)</label>
+            <input type="number" id="settingsIncomeCash" step="0.01" min="0" placeholder="0.00">
+          </div>
+        </div>
+        <div style="padding:0 var(--space-4) var(--space-4)">
+          <button class="btn btn-primary btn-full" id="btnSaveIncome">
+            💾 <span id="lbl_save_income">Зберегти дохід</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Firebase -->
+      <div class="settings-group">
+        <div class="settings-group-title" id="lbl_firebase">Firebase</div>
+        <div class="settings-row">
+          <div class="settings-row-icon" style="background:rgba(234,179,8,0.15);color:#CA8A04">🔥</div>
+          <div class="settings-row-content">
+            <div class="settings-row-label">Realtime Database</div>
+            <div class="settings-row-desc"><span id="firebaseStatus" class="badge badge-gray">Перевірка...</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /settings -->
+
+  </main>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <div class="bottom-nav-inner">
+      <div class="bottom-nav-item active" data-tab="home">
+        <div class="nav-icon">🏠</div>
+        <span class="nav-label" id="nav_home">Головна</span>
+      </div>
+      <div class="bottom-nav-item" data-tab="history">
+        <div class="nav-icon">📋</div>
+        <span class="nav-label" id="nav_history">Історія</span>
+      </div>
+      <div class="bottom-nav-item" data-tab="analytics">
+        <div class="nav-icon">📊</div>
+        <span class="nav-label" id="nav_analytics">Аналіз</span>
+      </div>
+      <div class="bottom-nav-item" data-tab="settings">
+        <div class="nav-icon">⚙️</div>
+        <span class="nav-label" id="nav_settings">Налаштування</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- FAB -->
+  <button class="fab fab-pulse" id="fab" aria-label="Додати витрату">＋</button>
+
+</div><!-- /appShell -->
+
+<!-- ===================== SCRIPTS ===================== -->
+<script type="module" src="js/main.js"></script>
+
+</body>
+</html>
