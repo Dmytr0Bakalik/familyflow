@@ -5,7 +5,7 @@
 import { t, monthName } from './i18n.js';
 import { getCurrentUser, USERS } from './auth.js';
 import { state, getCurrentMonthTx, getTotals, getTotalsByUser,
-         getExpensesByCategory, applyFilters } from './state.js';
+         getExpensesByCategory, applyFilters, getMonthTransactions } from './state.js';
 import { formatAmount, getCategoryById, getAllCategories } from './config.js';
 
 // lazy-import to avoid circular deps
@@ -156,7 +156,8 @@ export function renderRecentTransactions() {
 export function renderTransactionList() {
   const container = document.getElementById('historyList');
   if (!container) return;
-  const filtered = applyFilters(state.transactions);
+  const monthTx  = getMonthTransactions(state.historyMonth);
+  const filtered = applyFilters(monthTx);
   _setText('historyCount', filtered.length);
 
   if (!filtered.length) {

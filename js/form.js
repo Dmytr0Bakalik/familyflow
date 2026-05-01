@@ -7,6 +7,7 @@ import { getCurrentUser } from './auth.js';
 import { getAllCategories, getCategoryById, COLOR_PALETTE, CURRENCY } from './config.js';
 import { addTransaction, updateTransaction, saveCustomCategory } from './storage.js';
 import { showToast } from './ui.js';
+import { state } from './state.js';
 
 let _editingId = null;
 let _currentType = 'expense'; // 'expense' | 'income'
@@ -38,6 +39,12 @@ function _renderModal(tx = null) {
 
   const isEdit = !!tx;
   const today  = new Date().toISOString().split('T')[0];
+  const realMonth = today.slice(0, 7);
+  const viewedMonth = state.currentMonth;
+  // When browsing a past month, default date to last day of that month
+  const defaultDate = (!tx && viewedMonth < realMonth)
+    ? new Date(Number(viewedMonth.slice(0, 4)), Number(viewedMonth.slice(5, 7)), 0).toISOString().split('T')[0]
+    : today;
 
   body.innerHTML = `
     <!-- Type Toggle -->
@@ -88,7 +95,7 @@ function _renderModal(tx = null) {
     <div class="form-group">
       <label class="form-label" data-i18n="add_date">${t('add_date')}</label>
       <input type="date" id="formDate" class="form-input"
-             value="${tx?.date || today}" max="${today}">
+             value="${tx?.date || defaultDate}" max="${today}">
     </div>
 
     <!-- Note -->

@@ -116,7 +116,7 @@ async function connectData() {
       renderStatCards();
       renderWhoSpent();
       renderRecentTransactions();
-      if (_activeTab === 'history')   renderTransactionList();
+      if (_activeTab === 'history')   { renderHistoryMonthLabel(); renderTransactionList(); }
       if (_activeTab === 'analytics') { destroyCharts(); renderAllCharts(); }
     });
 
@@ -162,7 +162,7 @@ function switchTab(tab) {
     renderStatCards(); renderWhoSpent(); renderRecentTransactions();
     destroyCharts(); renderAllCharts();
   } else if (tab === 'history') {
-    setupFilters(); renderTransactionList();
+    renderHistoryMonthLabel(); setupFilters(); renderTransactionList();
   } else if (tab === 'analytics') {
     destroyCharts(); renderAllCharts();
   } else if (tab === 'calendar') {
@@ -248,11 +248,15 @@ function setupSettingsActions() {
 }
 
 // ---- Month navigation ----
+function _toYYYYMM(year, month) {
+  return `${year}-${String(month).padStart(2, '0')}`;
+}
+
 function setupMonthNav() {
   document.getElementById('prevMonth')?.addEventListener('click', () => {
     const [y, m] = state.currentMonth.split('-').map(Number);
     const d = new Date(y, m - 2, 1);
-    state.currentMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    state.currentMonth = _toYYYYMM(d.getFullYear(), d.getMonth() + 1);
     renderMonthLabel(); renderStatCards(); renderWhoSpent();
     renderRecentTransactions(); destroyCharts(); renderAllCharts();
   });
@@ -260,9 +264,24 @@ function setupMonthNav() {
     const [y, m] = state.currentMonth.split('-').map(Number);
     const d = new Date(y, m, 1);
     if (d > new Date()) return;
-    state.currentMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    state.currentMonth = _toYYYYMM(d.getFullYear(), d.getMonth() + 1);
     renderMonthLabel(); renderStatCards(); renderWhoSpent();
     renderRecentTransactions(); destroyCharts(); renderAllCharts();
+  });
+
+  // History tab month nav
+  document.getElementById('historyPrevMonth')?.addEventListener('click', () => {
+    const [y, m] = state.historyMonth.split('-').map(Number);
+    const d = new Date(y, m - 2, 1);
+    state.historyMonth = _toYYYYMM(d.getFullYear(), d.getMonth() + 1);
+    renderHistoryMonthLabel(); renderTransactionList();
+  });
+  document.getElementById('historyNextMonth')?.addEventListener('click', () => {
+    const [y, m] = state.historyMonth.split('-').map(Number);
+    const d = new Date(y, m, 1);
+    if (d > new Date()) return;
+    state.historyMonth = _toYYYYMM(d.getFullYear(), d.getMonth() + 1);
+    renderHistoryMonthLabel(); renderTransactionList();
   });
 }
 
@@ -270,6 +289,13 @@ function renderMonthLabel() {
   const el = document.getElementById('monthLabel');
   if (!el) return;
   const [y, m] = state.currentMonth.split('-');
+  el.textContent = `${t('month_' + (Number(m) - 1))} ${y}`;
+}
+
+function renderHistoryMonthLabel() {
+  const el = document.getElementById('historyMonthLabel');
+  if (!el) return;
+  const [y, m] = state.historyMonth.split('-');
   el.textContent = `${t('month_' + (Number(m) - 1))} ${y}`;
 }
 

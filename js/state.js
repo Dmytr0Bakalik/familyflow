@@ -6,8 +6,14 @@ export const state = {
   // All transactions from Firebase
   transactions: [],
 
-  // Current month filter (YYYY-MM)
+  // Current month filter (YYYY-MM) — used on home tab
   currentMonth: (() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  })(),
+
+  // History tab month filter (YYYY-MM) — independent of home tab
+  historyMonth: (() => {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   })(),
