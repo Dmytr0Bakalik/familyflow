@@ -24,6 +24,7 @@
   <link rel="stylesheet" href="css/animations.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/calendar.css">
 
   <style>
     /* Inline critical: login visible by default before JS loads */
@@ -198,6 +199,21 @@
 
     </div><!-- /history -->
 
+    <!-- ======= CALENDAR ======= -->
+    <div class="tab-panel" data-panel="calendar">
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-4)">
+        <h2 style="font-size:var(--text-xl);font-weight:var(--fw-bold)" id="lbl_calendar_title">Календар</h2>
+        <div class="form-type-toggle" style="width:auto;padding:3px;margin:0">
+          <button class="type-btn active" id="calBtnMonth">📅 Місяць</button>
+          <button class="type-btn" id="calBtnWeek">📆 Тиждень</button>
+        </div>
+      </div>
+
+      <div id="calGrid"></div>
+
+    </div><!-- /calendar -->
+
     <!-- ======= ANALYTICS ======= -->
     <div class="tab-panel" data-panel="analytics">
 
@@ -310,6 +326,10 @@
       <div class="bottom-nav-item" data-tab="analytics">
         <div class="nav-icon">📊</div>
         <span class="nav-label" id="nav_analytics">Аналіз</span>
+      </div>
+      <div class="bottom-nav-item" data-tab="calendar">
+        <div class="nav-icon">📅</div>
+        <span class="nav-label" id="nav_calendar">Календар</span>
       </div>
       <div class="bottom-nav-item" data-tab="settings">
         <div class="nav-icon">⚙️</div>

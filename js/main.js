@@ -13,6 +13,7 @@ import { renderAll, showToast, applyI18nById,
 import { openAddModal, setupModal } from './form.js';
 import { setupFilters } from './filters.js';
 import { renderAllCharts, destroyCharts } from './charts.js';
+import { renderCalendar, setupCalendar } from './calendar.js';
 
 let _activeTab = 'home';
 let _unsubscribeTx   = null;
@@ -164,6 +165,8 @@ function switchTab(tab) {
     setupFilters(); renderTransactionList();
   } else if (tab === 'analytics') {
     destroyCharts(); renderAllCharts();
+  } else if (tab === 'calendar') {
+    setupCalendar(); renderCalendar();
   } else if (tab === 'settings') {
     renderSettings(); setupSettingsActions();
   }
