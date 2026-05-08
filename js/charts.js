@@ -47,6 +47,14 @@ export function renderDonutChart() {
 
   const theme = _theme();
 
+  // Ensure canvas has explicit square size so center overlay aligns
+  const wrap = canvas.parentElement;
+  const size = Math.min(wrap?.clientWidth || 240, 240);
+  canvas.width  = size;
+  canvas.height = size;
+  canvas.style.display = 'block';
+  canvas.style.margin  = '0 auto';
+
   _donutChart = new Chart(canvas, {
     type: 'doughnut',
     data: {
@@ -60,6 +68,9 @@ export function renderDonutChart() {
     },
     options: {
       cutout: '68%',
+      responsive: false,
+      maintainAspectRatio: false,
+      layout: { padding: 0 },
       plugins: {
         legend: { display: false },
         tooltip: {

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Видалити дані за березень</title>
+  <style>
+    body { font-family: sans-serif; background: #111; color: #eee; padding: 40px; max-width: 500px; margin: 0 auto; }
+    button { background: #ef4444; color: #fff; border: none; padding: 14px 28px; border-radius: 10px; font-size: 16px; cursor: pointer; margin-top: 20px; }
+    button:disabled { background: #555; cursor: default; }
+    #log { margin-top: 20px; font-size: 14px; line-height: 1.8; color: #9ca3af; white-space: pre-wrap; }
+    .ok  { color: #22c55e; }
+    .err { color: #f43f5e; }
+  </style>
+</head>
+<body>
+  <h1>🗑️ Видалення березневих даних</h1>
+  <p>Натисни кнопку щоб видалити <strong>всі транзакції за березень 2026</strong> з Firebase.</p>
+  <button id="btn">Видалити всі записи за березень 2026</button>
+  <div id="log"></div>
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+  import { getDatabase, ref, get, remove } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+  import { firebaseConfig } from './js/firebase-config.js';
+
+  const log = (msg, cls = '') => {
+    const el = document.getElementById('log');
+    el.innerHTML += `<span class="${cls}">${msg}</span>\n`;
+  };
+
+  document.getElementById('btn').addEventListener('click', async () => {
+    const btn = document.getElementById('btn');
+    btn.disabled = true;
+    btn.textContent = 'Видаляю...';
+    log('🔌 Підключення до Firebase...');
+
+    try {
+      const app = initializeApp(firebaseConfig);
+      const db  = getDatabase(app);
+      const snap = await get(ref(db, 'transactions'));
+      const val  = snap.val() || {};
+
+      const marchKeys = Object.entries(val)
+        .filter(([, tx]) => tx.date && tx.date.startsWith('2026-03'))
+        .map(([key]) => key);
+
+      log(`📋 Знайдено ${marchKeys.length} записів за березень 2026`);
+
+      if (marchKeys.length === 0) {
+        log('✅ Нічого видаляти!', 'ok');
+        btn.textContent = 'Готово';
+        return;
+      }
+
+      let deleted = 0;
+      for (const key of marchKeys) {
+        await remove(ref(db, `transactions/${key}`));
+        log(`  Видалено: ${key}`, 'ok');
+        deleted++;
+      }
+
+      log(`\n✅ Готово! Видалено ${deleted} записів.`, 'ok');
+      btn.textContent = `Видалено ${deleted} записів ✓`;
+    } catch (e) {
+      log(`❌ Помилка: ${e.message}`, 'err');
+      btn.disabled = false;
+      btn.textContent = 'Спробувати ще раз';
+    }
+  });
+</script>
+</body>
+</html>

@@ -4,15 +4,33 @@
 
 import { t } from './i18n.js';
 import { getCurrentUser } from './auth.js';
+import { USERS } from './config.js';
 import { getAllCategories, getCategoryById, COLOR_PALETTE, CURRENCY } from './config.js';
 import { addTransaction, updateTransaction, saveCustomCategory } from './storage.js';
 import { showToast } from './ui.js';
+
+// Category note hints (UA)
+const CAT_HINTS = {
+  food:    'Напр.: обід з другом, Макдак...',
+  online:  'Напр.: Amazon, Rozetka...',
+  health:  'Напр.: аптека, стоматолог...',
+  housing: 'Напр.: оренда, комуналка...',
+  ticket:  'Напр.: кіно, концерт...',
+  misc:    'Напр.: дрібні покупки...',
+  clothes: 'Напр.: куртка, кросівки...',
+  extra:   'Напр.: подарунок, непередбачене...',
+  salary:  'Напр.: зарплата за квітень...',
+  sidejob: 'Напр.: фріланс проект...',
+  bonus:   'Напр.: квартальний бонус...',
+  other_in:'Напр.: продаж речей...',
+};
 
 let _editingId = null;
 let _currentType = 'expense'; // 'expense' | 'income'
 let _selectedCategory = null;
 let _selectedColor = COLOR_PALETTE[0];
 let _selectedEmoji = '📁';
+let _selectedUserId = null; // null = use current user
 
 // ---- Open modal to add new ----
 export function openAddModal(defaultType = 'expense') {
@@ -84,6 +102,19 @@ function _renderModal(tx = null) {
       </div>
     </div>
 
+    <!-- Who (user picker) -->
+    <div class="form-group">
+      <label class="form-label">Для кого</label>
+      <div class="user-picker" id="userPicker">
+        ${USERS.map(u => `
+          <button class="user-pick-btn ${(_selectedUserId || getCurrentUser()?.id) === u.id ? 'active' : ''}" data-uid="${u.id}">
+            <span class="user-pick-avatar">${u.avatar}</span>
+            <span class="user-pick-name">${u.name}</span>
+          </button>
+        `).join('')}
+      </div>
+    </div>
+
     <!-- Date -->
     <div class="form-group">
       <label class="form-label" data-i18n="add_date">${t('add_date')}</label>
@@ -99,6 +130,10 @@ function _renderModal(tx = null) {
              value="${tx?.note || ''}">
     </div>
   `;
+
+  // Init selected user
+  if (!_selectedUserId) _selectedUserId = getCurrentUser()?.id || 1;
+  if (tx?.userId) _selectedUserId = Number(tx.userId);
 
   // Render category grid
   _renderCategoryGrid(tx?.category || null);
@@ -120,6 +155,15 @@ function _renderModal(tx = null) {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+    });
+  });
+
+  // Wire user picker
+  document.querySelectorAll('.user-pick-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.user-pick-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      _selectedUserId = Number(btn.dataset.uid);
     });
   });
 
@@ -170,6 +214,11 @@ function _renderCategoryGrid(selectedId) {
       grid.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
       _selectedCategory = btn.dataset.catid;
+      // Update note placeholder with category hint
+      const noteEl = document.getElementById('formNote');
+      if (noteEl && !noteEl.value) {
+        noteEl.placeholder = CAT_HINTS[btn.dataset.catid] || t('add_note_placeholder');
+      }
     });
   });
 }
@@ -310,7 +359,7 @@ async function _handleSave() {
     categoryLabel: cat?.labelKey ? t(cat.labelKey) : (cat?.label || _selectedCategory),
     amount: Math.round(amount * 100) / 100,
     note,
-    userId: user?.id || 1,
+    userId: _selectedUserId || user?.id || 1,
   };
 
   try {
