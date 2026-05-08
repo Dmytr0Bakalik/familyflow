@@ -650,8 +650,108 @@
 }
 .emoji-btn.selected, .emoji-btn:hover { background: var(--accent-dim); }
 
-/* ---- ANALYTICS TAB ---- */
+/* ---- ANALYTICS DASHBOARD ---- */
 .analytics-grid { display: flex; flex-direction: column; gap: var(--space-4); }
+
+/* KPI Row */
+.an-kpi-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.an-kpi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color var(--transition);
+}
+.an-kpi-card:hover { border-color: var(--border-strong); }
+.an-kpi-full { grid-column: 1 / -1; flex-direction: row; align-items: center; flex-wrap: wrap; gap: var(--space-3); }
+.an-kpi-full .an-kpi-val { margin-left: auto; }
+.an-kpi-icon {
+  width: 36px; height: 36px;
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; margin-bottom: 2px;
+}
+.an-kpi-label { font-size: var(--text-xs); color: var(--text-muted); font-weight: var(--fw-medium); }
+.an-kpi-val   { font-size: var(--text-xl); font-weight: var(--fw-extrabold); color: var(--text-primary); }
+.an-kpi-sub   { font-size: var(--text-xs); color: var(--text-muted); }
+
+/* Savings rate card */
+.an-savings-card { margin-bottom: var(--space-4); }
+.an-rate-track {
+  height: 12px;
+  background: var(--bg-input);
+  border-radius: 6px;
+  position: relative;
+  overflow: visible;
+  margin: var(--space-2) 0;
+}
+.an-rate-bar {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.8s cubic-bezier(0.34,1.56,0.64,1);
+  max-width: 100%;
+}
+.an-rate-mark {
+  position: absolute;
+  top: -16px;
+  font-size: 9px;
+  color: var(--text-muted);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.an-rate-mark::after {
+  content: '';
+  position: absolute;
+  top: 18px; left: 50%;
+  width: 1px; height: 12px;
+  background: var(--border-strong);
+}
+
+/* AI Insights */
+.an-insights-card { margin-bottom: var(--space-4); }
+.an-insight-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+}
+.an-insight-item:last-child { border-bottom: none; }
+.an-insight-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.an-insight-text { font-size: var(--text-sm); line-height: 1.5; flex: 1; }
+
+/* Financial leaks */
+.an-leaks-card { margin-bottom: var(--space-4); }
+.an-leak-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border);
+}
+.an-leak-item:last-child { border-bottom: none; }
+.an-leak-icon {
+  width: 40px; height: 40px;
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+}
+.an-leak-info { flex: 1; min-width: 0; }
+.an-leak-name { font-size: var(--text-sm); font-weight: var(--fw-semibold); color: var(--text-primary); margin-bottom: 4px; }
+.an-leak-bar-wrap { height: 6px; background: var(--bg-input); border-radius: 3px; overflow: hidden; }
+.an-leak-bar { height: 100%; border-radius: 3px; transition: width 0.6s ease; }
+.an-leak-right { text-align: right; flex-shrink: 0; }
+.an-leak-amount { font-size: var(--text-sm); font-weight: var(--fw-bold); color: var(--text-primary); }
+.an-leak-pct    { font-size: var(--text-xs); color: var(--text-muted); }
+
 
 /* ---- HISTORY COUNT BADGE ---- */
 .history-header {

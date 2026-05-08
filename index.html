@@ -220,18 +220,44 @@
 
       <h2 style="font-size:var(--text-xl);font-weight:var(--fw-bold);margin-bottom:var(--space-5)" id="lbl_analytics_title">Аналіз витрат</h2>
 
+      <!-- KPI row -->
+      <div class="an-kpi-row" id="anKpiRow"></div>
+
+      <!-- Savings Rate bar -->
+      <div class="card an-savings-card" id="anSavingsCard"></div>
+
+      <!-- AI Insights -->
+      <div class="card an-insights-card" id="anInsights"></div>
+
+      <!-- Financial Leaks -->
+      <div class="card an-leaks-card" id="anLeaks"></div>
+
+      <!-- Charts -->
       <div class="analytics-grid">
+        <!-- Who spent -->
         <div class="chart-card card">
           <div class="chart-card-title">👥 <span id="lbl_who_spent2">Хто скільки витратив</span></div>
           <canvas id="chartMembers" height="180"></canvas>
         </div>
+        <!-- Category bar by month -->
+        <div class="chart-card card">
+          <div class="chart-card-title">📊 Категорії по місяцях</div>
+          <canvas id="chartCatBar" height="200"></canvas>
+        </div>
+        <!-- Trend -->
         <div class="chart-card card">
           <div class="chart-card-title">📈 Тренд за 6 місяців</div>
           <canvas id="chartTrend" height="200"></canvas>
         </div>
+        <!-- Cash Flow -->
+        <div class="chart-card card">
+          <div class="chart-card-title">💸 Cash Flow (цей місяць)</div>
+          <canvas id="chartCashFlow" height="180"></canvas>
+        </div>
       </div>
 
     </div><!-- /analytics -->
+
 
     <!-- ======= SETTINGS ======= -->
     <div class="tab-panel" data-panel="settings">

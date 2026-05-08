@@ -1,5 +1,5 @@
 // ============================================================
-// FAMILYFLOW — CALENDAR VIEW
+// FAMILYFLOW — CALENDAR VIEW (v2 — category color strips)
 // ============================================================
 
 import { state, getMonthTransactions } from './state.js';
@@ -38,22 +38,30 @@ function renderMonthCalendar() {
   const [y, m] = state.currentMonth.split('-').map(Number);
   const monthTx = getMonthTransactions(state.currentMonth);
 
-  // Map: date string → { total, txs }
+  // Map: date string → { total, income, txs, categories[] }
   const dayMap = {};
   monthTx.forEach(tx => {
     if (!tx.date) return;
-    if (!dayMap[tx.date]) dayMap[tx.date] = { total: 0, income: 0, txs: [] };
+    if (!dayMap[tx.date]) dayMap[tx.date] = { total: 0, income: 0, txs: [], categories: {} };
     const amt = Number(tx.amount) || 0;
-    if (tx.type === 'expense') dayMap[tx.date].total += amt;
-    else dayMap[tx.date].income += amt;
+    if (tx.type === 'expense') {
+      dayMap[tx.date].total += amt;
+      // Track category amounts for color strips
+      const catId = tx.category || 'misc';
+      const color = tx.categoryColor || '#94A3B8';
+      if (!dayMap[tx.date].categories[catId]) {
+        dayMap[tx.date].categories[catId] = { amount: 0, color, emoji: tx.categoryEmoji || '💸' };
+      }
+      dayMap[tx.date].categories[catId].amount += amt;
+    } else {
+      dayMap[tx.date].income += amt;
+    }
     dayMap[tx.date].txs.push(tx);
   });
 
   const firstDay = new Date(y, m - 1, 1);
   const lastDay  = new Date(y, m, 0);
   const totalDays = lastDay.getDate();
-
-  // Day of week offset (Mon=0)
   let startOffset = (firstDay.getDay() + 6) % 7;
 
   const today = new Date();
@@ -68,33 +76,43 @@ function renderMonthCalendar() {
     <div class="cal-days">
   `;
 
-  // Empty cells before first day
   for (let i = 0; i < startOffset; i++) {
     html += `<div class="cal-day cal-day--empty"></div>`;
   }
-
-  const maxDay = getMaxDayTotal(dayMap);
 
   for (let d = 1; d <= totalDays; d++) {
     const dateStr = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const day = dayMap[dateStr];
     const isToday = dateStr === todayStr;
-    const hasData = day && (day.total > 0 || day.income > 0);
-    const intensity = hasData && maxDay > 0 ? day.total / maxDay : 0;
+    const hasExpense = day && day.total > 0;
+    const hasIncome  = day && day.income > 0;
+
+    // Build color strips from categories sorted by amount
+    let colorStrips = '';
+    if (hasExpense && day.categories) {
+      const cats = Object.values(day.categories).sort((a, b) => b.amount - a.amount);
+      const total = day.total;
+      colorStrips = `<div class="cal-cat-strips">` +
+        cats.map(c => {
+          const pct = Math.max(10, Math.round((c.amount / total) * 100));
+          return `<div class="cal-cat-strip" style="background:${c.color};flex:${pct}" title="${c.emoji}"></div>`;
+        }).join('') +
+        `</div>`;
+    }
 
     html += `
-      <div class="cal-day ${isToday ? 'cal-day--today' : ''} ${hasData ? 'cal-day--has-data' : ''}"
-           data-date="${dateStr}" data-has="${hasData ? '1' : '0'}"
-           style="--day-intensity:${intensity.toFixed(2)}">
+      <div class="cal-day ${isToday ? 'cal-day--today' : ''} ${hasExpense ? 'cal-day--has-data' : ''} ${hasIncome && !hasExpense ? 'cal-day--income-only' : ''}"
+           data-date="${dateStr}">
         <div class="cal-day-num">${d}</div>
-        ${hasData && day.total > 0 ? `<div class="cal-day-amount">${formatAmount(day.total).replace(',00','')}</div>` : ''}
-        ${hasData && day.income > 0 ? `<div class="cal-day-income">+${formatAmount(day.income).replace(',00','')}</div>` : ''}
+        ${colorStrips}
+        ${hasExpense ? `<div class="cal-day-amount">${_shortAmount(day.total)}</div>` : ''}
+        ${hasIncome  ? `<div class="cal-day-income">+${_shortAmount(day.income)}</div>` : ''}
       </div>`;
   }
 
   html += `</div>`;
 
-  // Monthly summary row
+  // Monthly summary
   const monthTotals = monthTx.reduce((acc, tx) => {
     const amt = Number(tx.amount) || 0;
     if (tx.type === 'expense') acc.expense += amt;
@@ -112,6 +130,10 @@ function renderMonthCalendar() {
         <span class="cal-summary-label">${t('dash_total_income')}</span>
         <span class="cal-summary-val text-income">${formatAmount(monthTotals.income)}</span>
       </div>
+      <div class="cal-summary-item">
+        <span class="cal-summary-label">Баланс</span>
+        <span class="cal-summary-val ${monthTotals.income - monthTotals.expense >= 0 ? 'text-income' : 'text-expense'}">${formatAmount(monthTotals.income - monthTotals.expense)}</span>
+      </div>
     </div>`;
 
   container.innerHTML = html;
@@ -124,7 +146,6 @@ function renderWeekCalendar() {
   if (!container) return;
 
   const today = new Date();
-  // Start of current week (Monday)
   const dayOfWeek = (today.getDay() + 6) % 7;
   const monday = new Date(today);
   monday.setDate(today.getDate() - dayOfWeek);
@@ -136,7 +157,6 @@ function renderWeekCalendar() {
     days.push(d);
   }
 
-  // Get all tx for this week
   const weekTx = state.transactions.filter(tx => {
     if (!tx.date) return false;
     const [ty, tm, td] = tx.date.split('-');
@@ -153,12 +173,9 @@ function renderWeekCalendar() {
     dayMap[tx.date].txs.push(tx);
   });
 
-  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-  const dayNames = ['Понеділок','Вівторок','Середа','Четвер','Пʼятниця','Субота','Неділя'];
-  const maxTotal = Math.max(...days.map(d => {
-    const ds = _dateStr(d);
-    return dayMap[ds]?.total || 0;
-  }), 1);
+  const todayStr = _dateStr(today);
+  const dayNames = ['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
+  const maxTotal = Math.max(...days.map(d => dayMap[_dateStr(d)]?.total || 0), 1);
 
   let html = `<div class="week-grid">`;
 
@@ -166,9 +183,8 @@ function renderWeekCalendar() {
     const ds = _dateStr(d);
     const day = dayMap[ds];
     const isToday = ds === todayStr;
-    const barH = day ? Math.round((day.total / maxTotal) * 60) : 0;
+    const barH = day ? Math.round((day.total / maxTotal) * 80) : 0;
 
-    // Transactions list
     let txHtml = '';
     if (day?.txs?.length) {
       txHtml = day.txs.slice(0, 4).map(tx => {
@@ -224,10 +240,10 @@ function showDayModal(dateStr, txs) {
     const user = USERS.find(u => u.id === Number(tx.userId));
     const isExp = tx.type === 'expense';
     return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
-      <div style="font-size:22px">${tx.categoryEmoji || (isExp?'💸':'💰')}</div>
+      <div style="width:36px;height:36px;border-radius:10px;background:${tx.categoryColor || '#94A3B8'}22;display:flex;align-items:center;justify-content:center;font-size:18px;">${tx.categoryEmoji || (isExp?'💸':'💰')}</div>
       <div style="flex:1">
         <div style="font-weight:600;color:var(--text-primary)">${tx.categoryLabel || tx.category || '—'}</div>
-        <div style="font-size:12px;color:var(--text-muted)">${user?.avatar||''} ${user?.name||''} • ${tx.method==='cash'?'💵':'💳'}</div>
+        <div style="font-size:12px;color:var(--text-muted)">${user?.avatar||''} ${user?.name||''} • ${tx.method==='cash'?'💵 Готівка':'💳 Картка'}${tx.note ? ' • ' + tx.note : ''}</div>
       </div>
       <div style="font-weight:700;color:${isExp?'var(--expense-color)':'var(--income-color)'}">
         ${isExp?'−':'+'}${formatAmount(tx.amount)}
@@ -241,7 +257,7 @@ function showDayModal(dateStr, txs) {
       Витрати: <strong style="color:var(--expense-color)">${formatAmount(totalExp)}</strong>
     </div>
     ${txHtml}
-    <button class="btn btn-primary btn-full" id="calAddBtn" style="margin-top:16px">＋ Додати витрату</button>
+    <button class="btn btn-primary btn-full" id="calAddBtn" style="margin-top:16px">＋ Додати витрату на цей день</button>
   `;
   document.getElementById('modalBackdrop').style.display = 'flex';
   document.getElementById('modalCancelBtn').textContent = 'Закрити';
@@ -255,8 +271,9 @@ function showDayModal(dateStr, txs) {
 }
 
 // ---- Helpers ----
-function getMaxDayTotal(dayMap) {
-  return Math.max(...Object.values(dayMap).map(d => d.total), 0);
+function _shortAmount(n) {
+  if (n >= 1000) return (n / 1000).toFixed(1).replace('.0','') + 'k';
+  return Math.round(n) + '';
 }
 
 function _dateStr(d) {

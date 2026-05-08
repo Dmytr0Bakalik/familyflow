@@ -12,7 +12,7 @@ import { renderAll, showToast, applyI18nById,
          renderTransactionList, renderHeader, renderSettings } from './ui.js';
 import { openAddModal, setupModal } from './form.js';
 import { setupFilters } from './filters.js';
-import { renderAllCharts, destroyCharts } from './charts.js';
+import { renderAllCharts, renderAnalyticsDashboard, destroyCharts } from './charts.js';
 import { renderCalendar, setupCalendar } from './calendar.js';
 
 let _activeTab = 'home';
@@ -164,7 +164,7 @@ function switchTab(tab) {
   } else if (tab === 'history') {
     setupFilters(); renderTransactionList();
   } else if (tab === 'analytics') {
-    destroyCharts(); renderAllCharts();
+    destroyCharts(); renderAnalyticsDashboard();
   } else if (tab === 'calendar') {
     setupCalendar(); renderCalendar();
   } else if (tab === 'settings') {
