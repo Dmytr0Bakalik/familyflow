@@ -177,13 +177,18 @@ function _renderModal(tx = null) {
       : (_currentType === 'expense' ? t('add_title_expense') : t('add_title_income'));
   }
 
-  // Save button
+  // Save button — always restore visibility (calendar day-modal may have hidden it)
   const saveBtn = document.getElementById('modalSaveBtn');
   if (saveBtn) {
+    saveBtn.style.display = '';
     saveBtn.onclick = _handleSave;
     const saveLabelEl = saveBtn.querySelector('span') || saveBtn;
     saveLabelEl.textContent = t('add_save');
   }
+
+  // Cancel button — restore text
+  const cancelBtn = document.getElementById('modalCancelBtn');
+  if (cancelBtn) cancelBtn.textContent = t('add_cancel');
 
   backdrop.style.display = 'flex';
   setTimeout(() => document.getElementById('formAmount')?.focus(), 100);
@@ -391,6 +396,12 @@ function _getFormData() {
 export function closeModal() {
   const backdrop = document.getElementById('modalBackdrop');
   if (backdrop) backdrop.style.display = 'none';
+  // Restore Save button (may have been hidden by calendar day-modal)
+  const saveBtn = document.getElementById('modalSaveBtn');
+  if (saveBtn) saveBtn.style.display = '';
+  // Restore Cancel button text
+  const cancelBtn = document.getElementById('modalCancelBtn');
+  if (cancelBtn) cancelBtn.textContent = t('add_cancel');
 }
 
 // ---- Setup modal close button ----
