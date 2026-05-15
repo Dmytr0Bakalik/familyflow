@@ -6,7 +6,7 @@ import { t, monthName } from './i18n.js';
 import { getCurrentUser, USERS } from './auth.js';
 import { state, getCurrentMonthTx, getTotals, getTotalsByUser,
          getExpensesByCategory, applyFilters } from './state.js';
-import { formatAmount, getCategoryById, getAllCategories } from './config.js';
+import { formatAmount, getCategoryById, getAllCategories, getAvatarHTML } from './config.js';
 
 // lazy-import to avoid circular deps
 async function _getDeleteFn() {
@@ -84,7 +84,7 @@ export function renderHeader() {
   const user = getCurrentUser();
   if (!user) return;
   const avatarEl = document.getElementById('headerAvatar');
-  if (avatarEl) avatarEl.textContent = user.avatar;
+  if (avatarEl) avatarEl.innerHTML = getAvatarHTML(user.id, 30);
 
   // Greeting
   const greetEl = document.getElementById('dashGreeting');
@@ -126,7 +126,7 @@ export function renderWhoSpent() {
     const totals = byUser[u.id] || { totalExpense: 0 };
     return `
       <div class="who-card hover-lift">
-        <div class="who-avatar">${u.avatar}</div>
+        <div class="who-avatar">${getAvatarHTML(u.id, 40)}</div>
         <div class="who-name">${u.name}</div>
         <div class="who-amount">${formatAmount(totals.totalExpense)}</div>
         <div class="who-label">${t('dash_total_expenses')}</div>
@@ -189,7 +189,7 @@ export function renderSettings() {
   if (!user) return;
   _setText('settingsUserName', user.name);
   const av = document.getElementById('settingsAvatar');
-  if (av) av.textContent = user.avatar;
+  if (av) av.innerHTML = getAvatarHTML(user.id, 52);
 }
 
 // ---- Render all ----

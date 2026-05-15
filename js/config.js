@@ -4,13 +4,40 @@
 
 // ---- User Profiles ----
 export const USERS = [
-  { id: 1, name: 'Dmytro',  initials: 'D',  avatar: '👨', defaultTheme: 'dark' },
-  { id: 2, name: 'Markian', initials: 'M',  avatar: '👦', defaultTheme: 'dark' },
+  { id: 1, name: 'Dmytro',  initials: 'D',  avatar: '😎', defaultTheme: 'dark' },
+  { id: 2, name: 'Markian', initials: 'M',  avatar: '😄', defaultTheme: 'dark' },
   { id: 3, name: 'Mama',    initials: 'М',  avatar: '👩', defaultTheme: 'pink' },
 ];
 
 export function getUser(id) {
   return USERS.find(u => u.id === Number(id)) || USERS[0];
+}
+
+// ---- Avatar photo helpers ----
+// Photos stored as base64 in localStorage: ff_avatar_photo_1, ff_avatar_photo_2, ff_avatar_photo_3
+
+export function getAvatarSrc(userId) {
+  return localStorage.getItem(`ff_avatar_photo_${userId}`) || null;
+}
+
+// Returns <img> HTML if photo exists, otherwise returns the emoji string
+export function getAvatarHTML(userId, sizePx = 36) {
+  const src  = getAvatarSrc(userId);
+  const user = getUser(userId);
+  if (src) {
+    return `<img src="${src}" class="avatar-photo" style="width:${sizePx}px;height:${sizePx}px;border-radius:50%;object-fit:cover;flex-shrink:0;" alt="${user.name}">`;
+  }
+  return user.avatar;
+}
+
+// Set photo for user (base64 string)
+export function setAvatarSrc(userId, base64) {
+  localStorage.setItem(`ff_avatar_photo_${userId}`, base64);
+}
+
+// Remove photo for user
+export function removeAvatarSrc(userId) {
+  localStorage.removeItem(`ff_avatar_photo_${userId}`);
 }
 
 // ---- Built-in Expense Categories ----

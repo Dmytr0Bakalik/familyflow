@@ -5,7 +5,7 @@
 import { getCurrentUser, loginAs, logout, toggleTheme,
          setTheme, isLoggedIn, USERS } from './auth.js';
 import { state } from './state.js';
-import { setCustomCategories } from './config.js';
+import { setCustomCategories, getAvatarSrc, setAvatarSrc, removeAvatarSrc, getAvatarHTML } from './config.js';
 import { getLang, setLang, t } from './i18n.js';
 import { renderAll, showToast, applyI18nById,
          renderStatCards, renderWhoSpent, renderRecentTransactions,
@@ -77,6 +77,7 @@ async function enterApp(userId) {
   applyI18nById();
   renderHeader();
   renderMonthLabel();
+  _updateLoginAvatars(); // Update login screen avatars with photos
 
   await connectData();
 
@@ -212,6 +213,7 @@ function setupSettingsActions() {
     if (_unsubscribeTx)   _unsubscribeTx();
     if (_unsubscribeCats) _unsubscribeCats();
     logout();
+    _updateLoginAvatars();
     document.getElementById('loginScreen').style.display = 'flex';
     document.getElementById('appShell'   ).style.display = 'none';
     applyI18nById();
@@ -234,6 +236,49 @@ function setupSettingsActions() {
     showToast(t('saved_ok'));
   });
 
+  // ---- Photo upload ----
+  const removeBtn = document.getElementById('btnRemovePhoto');
+  if (removeBtn) removeBtn.style.display = getAvatarSrc(user.id) ? '' : 'none';
+
+  document.getElementById('avatarFileInput')?.addEventListener('change', e => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { showToast('Фото занадто велике (макс. 2 MB)', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = ev => {
+      // Resize to max 200x200 via canvas to save localStorage space
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxSz = 200;
+        const ratio = Math.min(maxSz / img.width, maxSz / img.height, 1);
+        canvas.width  = Math.round(img.width  * ratio);
+        canvas.height = Math.round(img.height * ratio);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        const base64 = canvas.toDataURL('image/jpeg', 0.85);
+        setAvatarSrc(user.id, base64);
+        // Refresh avatar everywhere
+        renderHeader();
+        renderSettings();
+        _updateLoginAvatars();
+        if (removeBtn) removeBtn.style.display = '';
+        showToast('Фото збережено ✓');
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  removeBtn?.addEventListener('click', () => {
+    removeAvatarSrc(user.id);
+    renderHeader();
+    renderSettings();
+    _updateLoginAvatars();
+    removeBtn.style.display = 'none';
+    showToast('Фото видалено');
+  });
+
+  // ---- Theme ----
   document.getElementById('btnThemeDark')?.addEventListener('click', () => {
     setTheme('dark'); updateThemeBtn('dark'); destroyCharts(); renderAllCharts();
   });
@@ -244,6 +289,22 @@ function setupSettingsActions() {
   document.getElementById('settingsLangToggle')?.addEventListener('click', () => {
     document.getElementById('appLangToggle')?.click();
     updateLangBtns();
+  });
+}
+
+// Update login screen avatars with saved photos
+function _updateLoginAvatars() {
+  USERS.forEach(u => {
+    const btn = document.getElementById(`loginBtn${u.id}`);
+    if (!btn) return;
+    const avatarEl = btn.querySelector('.login-avatar');
+    if (!avatarEl) return;
+    const src = getAvatarSrc(u.id);
+    if (src) {
+      avatarEl.innerHTML = `<img src="${src}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;" alt="${u.name}">`;
+    } else {
+      avatarEl.innerHTML = u.avatar;
+    }
   });
 }
 

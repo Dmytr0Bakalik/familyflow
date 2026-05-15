@@ -4,8 +4,7 @@
 
 import { t } from './i18n.js';
 import { getCurrentUser } from './auth.js';
-import { USERS } from './config.js';
-import { getAllCategories, getCategoryById, COLOR_PALETTE, CURRENCY } from './config.js';
+import { USERS, getAllCategories, getCategoryById, COLOR_PALETTE, CURRENCY, getAvatarHTML } from './config.js';
 import { addTransaction, updateTransaction, saveCustomCategory } from './storage.js';
 import { showToast } from './ui.js';
 
@@ -108,7 +107,7 @@ function _renderModal(tx = null) {
       <div class="user-picker" id="userPicker">
         ${USERS.map(u => `
           <button class="user-pick-btn ${(_selectedUserId || getCurrentUser()?.id) === u.id ? 'active' : ''}" data-uid="${u.id}">
-            <span class="user-pick-avatar">${u.avatar}</span>
+            <span class="user-pick-avatar">${getAvatarHTML(u.id, 28)}</span>
             <span class="user-pick-name">${u.name}</span>
           </button>
         `).join('')}

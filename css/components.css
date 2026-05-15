@@ -609,9 +609,36 @@
   border: 1px solid var(--border-strong);
   margin-bottom: var(--space-4);
 }
-.profile-avatar { font-size: 48px; }
+.profile-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.profile-avatar { font-size: 52px; line-height: 1; }
+.profile-avatar img { border-radius: 50%; object-fit: cover; }
 .profile-name   { font-size: var(--text-xl); font-weight: var(--fw-bold); color: var(--text-primary); }
 .profile-sub    { font-size: var(--text-sm); color: var(--text-muted); }
+
+/* Camera upload button */
+.avatar-upload-btn {
+  position: absolute;
+  bottom: -4px;
+  right: -4px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+  border: 2px solid var(--bg-card);
+  transition: all var(--transition);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.avatar-upload-btn:hover { transform: scale(1.15); background: var(--accent-hover); }
+
 
 /* ---- COLOR PALETTE (custom category) ---- */
 .color-palette {
