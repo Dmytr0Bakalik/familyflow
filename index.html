@@ -129,16 +129,35 @@
           </div>
         </div>
         <!-- Card -->
-        <div class="card stat-card hover-lift">
+        <div class="card stat-card stat-card--clickable" id="statCardCard">
           <div class="stat-card-icon stat-icon-card">💳</div>
           <div class="stat-label" id="lbl_card">Картка</div>
           <div class="stat-value" id="statCard">0,00 €</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:2px">Натисни → деталі</div>
         </div>
         <!-- Cash -->
-        <div class="card stat-card hover-lift">
+        <div class="card stat-card stat-card--clickable" id="statCardCash">
           <div class="stat-card-icon stat-icon-cash">💵</div>
           <div class="stat-label" id="lbl_cash">Готівка</div>
           <div class="stat-value" id="statCash">0,00 €</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:2px">Натисни → деталі</div>
+        </div>
+        <!-- Savings -->
+        <div class="card stat-card balance-hero" id="statSavingsCard" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(34,197,94,0.08),var(--bg-card))">
+          <div style="display:flex;align-items:center;gap:var(--space-3)">
+            <div class="stat-card-icon stat-icon-savings">🏦</div>
+            <div>
+              <div class="stat-label">Заощадження / Недоторканний запас</div>
+              <div class="stat-value" id="statSavings" style="font-size:var(--text-xl)">0,00 €</div>
+            </div>
+            <div style="margin-left:auto;text-align:right">
+              <div class="stat-label">Savings Rate</div>
+              <div class="stat-value" id="statSavingsRate" style="font-size:var(--text-xl)">0%</div>
+            </div>
+          </div>
+          <div class="an-rate-track" style="margin-top:var(--space-3)">
+            <div class="an-rate-bar" id="statSavingsBar" style="width:0%;background:var(--income-color)"></div>
+          </div>
         </div>
       </div>
 

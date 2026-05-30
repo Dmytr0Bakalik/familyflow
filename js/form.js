@@ -4,7 +4,7 @@
 
 import { t } from './i18n.js';
 import { getCurrentUser } from './auth.js';
-import { USERS, getAllCategories, getCategoryById, COLOR_PALETTE, CURRENCY, getAvatarHTML } from './config.js';
+import { USERS, getAllCategories, getCategoryById, COLOR_PALETTE, CURRENCY, getAvatarHTML, SUBCATEGORIES } from './config.js';
 import { addTransaction, updateTransaction, saveCustomCategory } from './storage.js';
 import { showToast } from './ui.js';
 
@@ -223,7 +223,49 @@ function _renderCategoryGrid(selectedId) {
       if (noteEl && !noteEl.value) {
         noteEl.placeholder = CAT_HINTS[btn.dataset.catid] || t('add_note_placeholder');
       }
+      // Render subcategory chips
+      _renderSubcategories(btn.dataset.catid);
     });
+  });
+  // Re-render subcategories if already selected
+  if (_selectedCategory) _renderSubcategories(_selectedCategory);
+}
+
+// ---- Subcategory chips ----
+function _renderSubcategories(catId) {
+  let wrap = document.getElementById('subcatWrap');
+  const subs = SUBCATEGORIES[catId];
+  if (!subs || !subs.length) {
+    if (wrap) wrap.innerHTML = '';
+    return;
+  }
+  if (!wrap) {
+    // Insert after note group
+    const noteGroup = document.getElementById('formNote')?.closest('.form-group');
+    if (!noteGroup) return;
+    wrap = document.createElement('div');
+    wrap.id = 'subcatWrap';
+    wrap.className = 'form-group';
+    noteGroup.after(wrap);
+  }
+  wrap.innerHTML = `
+    <label class="form-label">📍 Де / Що саме</label>
+    <div class="subcat-chips" id="subcatChips">
+      ${subs.map(s => `<button class="subcat-chip" type="button">${s}</button>`).join('')}
+      <button class="subcat-chip subcat-chip--custom" type="button" id="subcatCustomBtn">✏️ Своє</button>
+    </div>
+  `;
+  wrap.querySelectorAll('.subcat-chip:not(.subcat-chip--custom)').forEach(btn => {
+    btn.addEventListener('click', () => {
+      wrap.querySelectorAll('.subcat-chip').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const noteEl = document.getElementById('formNote');
+      if (noteEl) { noteEl.value = btn.textContent; }
+    });
+  });
+  wrap.querySelector('#subcatCustomBtn')?.addEventListener('click', () => {
+    const noteEl = document.getElementById('formNote');
+    if (noteEl) { noteEl.value = ''; noteEl.focus(); }
   });
 }
 

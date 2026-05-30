@@ -111,8 +111,64 @@ export function renderStatCards() {
     balEl.className   = 'stat-value ' + (totals.balance >= 0 ? 'text-income' : 'text-expense');
   }
 
+  // Savings = income - expenses
+  const savings    = totals.income - totals.totalExpense;
+  const savingsRate = totals.income > 0 ? Math.round((savings / totals.income) * 100) : 0;
+  _setText('statSavings',     formatAmount(Math.max(0, savings)));
+  _setText('statSavingsRate', `${Math.max(0, savingsRate)}%`);
+  const bar = document.getElementById('statSavingsBar');
+  if (bar) bar.style.width = `${Math.min(100, Math.max(0, savingsRate))}%`;
+
   // Donut center total
   _setText('donutTotalVal', formatAmount(totals.totalExpense));
+
+  // Bind clickable cards
+  _bindStatCardClicks();
+}
+
+function _bindStatCardClicks() {
+  const cardEl = document.getElementById('statCardCard');
+  const cashEl = document.getElementById('statCardCash');
+  if (cardEl && !cardEl._bound) {
+    cardEl._bound = true;
+    cardEl.addEventListener('click', () => _showMethodModal('card'));
+  }
+  if (cashEl && !cashEl._bound) {
+    cashEl._bound = true;
+    cashEl.addEventListener('click', () => _showMethodModal('cash'));
+  }
+}
+
+function _showMethodModal(method) {
+  const monthTx = getCurrentMonthTx();
+  const filtered = monthTx.filter(tx => tx.type === 'expense' && tx.method === method);
+  const label    = method === 'card' ? '💳 Витрати по картці' : '💵 Витрати готівкою';
+
+  // Build or reuse overlay
+  let overlay = document.getElementById('methodFilterOverlay');
+  if (overlay) overlay.remove();
+  overlay = document.createElement('div');
+  overlay.id = 'methodFilterOverlay';
+  overlay.className = 'modal-backdrop';
+  overlay.style.cssText = 'display:flex;z-index:900';
+
+  const txHTML = filtered.length
+    ? filtered.map(tx => _txItemHTML(tx)).join('')
+    : `<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-title">Транзакцій немає</div></div>`;
+
+  overlay.innerHTML = `
+    <div class="modal-panel" style="max-height:80dvh">
+      <div class="modal-header">
+        <h2 class="modal-title">${label}</h2>
+        <button class="icon-btn" id="closeMethodModal">✕</button>
+      </div>
+      <div class="modal-body" style="padding:var(--space-4)">${txHTML}</div>
+    </div>`;
+
+  document.body.appendChild(overlay);
+  overlay.querySelector('#closeMethodModal')?.addEventListener('click', () => overlay.remove());
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  // Note: no edit/delete in this quick view
 }
 
 // ---- Who spent ----

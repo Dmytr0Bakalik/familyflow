@@ -64,6 +64,18 @@ export const INCOME_CATEGORIES = [
 // Shape: { id: 'custom_xxx', label: 'My Cat', emoji: '🌟', color: '#hex', type: 'expense'|'income', builtin: false }
 let _customCategories = [];
 
+// ---- Subcategories (quick-fill for note field) ----
+export const SUBCATEGORIES = {
+  food:    ['Lidl','Aldi','Netto','Kaufland','Turkish Market','Billa','Rewe','Spar'],
+  online:  ['AliExpress','eBay','Amazon','Temu','Shein','Otto','Zalando'],
+  health:  ['Ліки','DM Drogerie','Rossmann','Müller','Apotheke','Лікар','Аналізи'],
+  housing: ['Оренда','Комунальні','Страховка','Газ','Електрика','Інтернет вдома'],
+  misc:    ['Woolworths','KiK','Action','Tedi','Дрібниці'],
+  ticket:  ['Кіно','Концерт','Театр','Музей','Транспорт','Квиток'],
+  extra:   ['Netflix','Spotify','Amazon Prime','YouTube','Disney+','Apple','Інша підписка'],
+  internet:['A1','Magenta','Drei','Hutchison','YouTube Premium','Apple One','Інше'],
+};
+
 export function setCustomCategories(cats) { _customCategories = cats || []; }
 export function getCustomCategories() { return _customCategories; }
 
