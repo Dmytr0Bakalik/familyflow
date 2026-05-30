@@ -49,8 +49,7 @@ export const EXPENSE_CATEGORIES = [
   { id: 'ticket',  labelKey: 'cat_ticket',  emoji: '🎫', color: '#F59E0B', builtin: true },
   { id: 'misc',    labelKey: 'cat_misc',    emoji: '🪙', color: '#94A3B8', builtin: true },
   { id: 'clothes', labelKey: 'cat_clothes', emoji: '👕', color: '#EC4899', builtin: true },
-  { id: 'subs',    labelKey: 'cat_subs',   emoji: '📡', color: '#8B5CF6', builtin: true },
-  { id: 'extra',   labelKey: 'cat_extra',   emoji: '➕', color: '#6366F1', builtin: true },
+  { id: 'subs',    labelKey: 'cat_subs',    emoji: '📡', color: '#8B5CF6', builtin: true },
   { id: 'internet',labelKey: 'cat_internet',emoji: '💻', color: '#6B7280', builtin: true },
 ];
 
@@ -70,16 +69,14 @@ let _customCategories = [];
 // Each item: { name, logo? (URL), emoji? (fallback), color (brand color) }
 export const SUBCATEGORIES = {
   food: [
-    { name: 'Lidl',           logo: 'https://logo.clearbit.com/lidl.de',         color: '#0050AA' },
-    { name: 'Kaufland',       logo: 'https://logo.clearbit.com/kaufland.de',      color: '#CC0000' },
-    { name: 'Aldi Nord',      logo: 'https://logo.clearbit.com/aldi-nord.de',     color: '#1E3A8A' },
-    { name: 'Netto',          logo: 'https://logo.clearbit.com/netto-online.de',  color: '#E8BC00' },
-    { name: 'Rewe',           logo: 'https://logo.clearbit.com/rewe.de',          color: '#CC0000' },
-    { name: 'Penny',          logo: 'https://logo.clearbit.com/penny.de',         color: '#CC0000' },
-    { name: 'Billa',          logo: 'https://logo.clearbit.com/billa.at',         color: '#E85D04' },
-    { name: 'Spar',           logo: 'https://logo.clearbit.com/spar.at',          color: '#007A33' },
-    { name: 'Türkischer',     emoji: '🫒',                                        color: '#C41E3A' },
-    { name: 'Restaurant',     emoji: '🍽️',                                        color: '#F59E0B' },
+    { name: 'Lidl',        logo: 'https://logo.clearbit.com/lidl.de',        color: '#0050AA' },
+    { name: 'Kaufland',    logo: 'https://logo.clearbit.com/kaufland.de',     color: '#CC0000' },
+    { name: 'Aldi Nord',   logo: 'https://logo.clearbit.com/aldi-nord.de',    color: '#1E3A8A' },
+    { name: 'Netto',       logo: 'https://logo.clearbit.com/netto-online.de', color: '#E8BC00' },
+    { name: 'Rewe',        logo: 'https://logo.clearbit.com/rewe.de',         color: '#CC0000' },
+    { name: 'Penny',       logo: 'https://logo.clearbit.com/penny.de',        color: '#CC0000' },
+    { name: 'Türkischer',  emoji: '🫏',                                   color: '#C41E3A' },
+    { name: 'Restaurant',  emoji: '🍽️',                                   color: '#F59E0B' },
   ],
   online: [
     { name: 'AliExpress',     logo: 'https://logo.clearbit.com/aliexpress.com',   color: '#FF4747' },
@@ -131,20 +128,14 @@ export const SUBCATEGORIES = {
     { name: 'Adobe',        logo: 'https://logo.clearbit.com/adobe.com',      color: '#FF0000' },
     { name: 'Інша',         emoji: '📦',                                         color: '#6366F1' },
   ],
-  extra: [
-    { name: 'Netflix',        logo: 'https://logo.clearbit.com/netflix.com',     color: '#E50914' },
-    { name: 'Spotify',        logo: 'https://logo.clearbit.com/spotify.com',     color: '#1DB954' },
-    { name: 'Amazon Prime',   logo: 'https://logo.clearbit.com/amazon.de',       color: '#00A8E1' },
-    { name: 'YouTube',        logo: 'https://logo.clearbit.com/youtube.com',     color: '#FF0000' },
-    { name: 'Disney+',        logo: 'https://logo.clearbit.com/disneyplus.com',  color: '#0063E5' },
-    { name: 'Apple',          logo: 'https://logo.clearbit.com/apple.com',       color: '#555555' },
-  ],
   internet: [
-    { name: 'A1',             logo: 'https://logo.clearbit.com/a1.net',           color: '#E30613' },
-    { name: 'Magenta',        logo: 'https://logo.clearbit.com/magenta.at',       color: '#E20074' },
-    { name: 'Drei',           logo: 'https://logo.clearbit.com/drei.at',          color: '#EE0033' },
-    { name: 'Hutchison',      emoji: '📡',                                         color: '#FF6600' },
-    { name: 'Інтернет',       emoji: '🌐',                                         color: '#3B82F6' },
+    { name: 'Інтернет',    emoji: '🌐', color: '#3B82F6' },
+    { name: 'Телефон 1',  emoji: '📱', color: '#10B981' },
+    { name: 'Телефон 2',  emoji: '📱', color: '#8B5CF6' },
+    { name: 'A1',         logo: 'https://logo.clearbit.com/a1.net',     color: '#E30613' },
+    { name: 'Magenta',    logo: 'https://logo.clearbit.com/magenta.at',  color: '#E20074' },
+    { name: 'Drei',       logo: 'https://logo.clearbit.com/drei.at',     color: '#EE0033' },
+    { name: 'Hutchison',  emoji: '📡',                                  color: '#FF6600' },
   ],
 };
 

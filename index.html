@@ -113,51 +113,31 @@
 
       <!-- Stats -->
       <div class="stats-grid stagger">
-        <!-- Balance -->
+        <!-- Balance hero (full width) -->
         <div class="card stat-card balance-hero">
-          <div class="stat-label" id="lbl_balance">Баланс</div>
+          <div class="stat-label" id="lbl_balance">Баланс місяця</div>
           <div class="stat-value" id="statBalance">— €</div>
-          <div class="balance-sub-row">
-            <div class="balance-sub-item">
-              <div class="balance-sub-dot" style="background:var(--income-color)"></div>
-              <span id="lbl_income">Дохід</span>: <strong id="statIncome" style="color:var(--income-color);margin-left:4px">0,00 €</strong>
-            </div>
-            <div class="balance-sub-item">
-              <div class="balance-sub-dot" style="background:var(--expense-color)"></div>
-              <span id="lbl_expense">Витрати</span>: <strong id="statExpense" style="color:var(--expense-color);margin-left:4px">0,00 €</strong>
-            </div>
-          </div>
         </div>
-        <!-- Card -->
+        <!-- 4 mini boxes -->
         <div class="card stat-card stat-card--clickable" id="statCardCard">
           <div class="stat-card-icon stat-icon-card">💳</div>
           <div class="stat-label" id="lbl_card">Картка</div>
           <div class="stat-value" id="statCard">0,00 €</div>
-          <div style="font-size:10px;color:var(--text-muted);margin-top:2px">Натисни → деталі</div>
         </div>
-        <!-- Cash -->
         <div class="card stat-card stat-card--clickable" id="statCardCash">
           <div class="stat-card-icon stat-icon-cash">💵</div>
           <div class="stat-label" id="lbl_cash">Готівка</div>
           <div class="stat-value" id="statCash">0,00 €</div>
-          <div style="font-size:10px;color:var(--text-muted);margin-top:2px">Натисни → деталі</div>
         </div>
-        <!-- Savings -->
-        <div class="card stat-card balance-hero" id="statSavingsCard" style="grid-column:1/-1;background:linear-gradient(135deg,rgba(34,197,94,0.08),var(--bg-card))">
-          <div style="display:flex;align-items:center;gap:var(--space-3)">
-            <div class="stat-card-icon stat-icon-savings">🏦</div>
-            <div>
-              <div class="stat-label">Заощадження / Недоторканний запас</div>
-              <div class="stat-value" id="statSavings" style="font-size:var(--text-xl)">0,00 €</div>
-            </div>
-            <div style="margin-left:auto;text-align:right">
-              <div class="stat-label">Savings Rate</div>
-              <div class="stat-value" id="statSavingsRate" style="font-size:var(--text-xl)">0%</div>
-            </div>
-          </div>
-          <div class="an-rate-track" style="margin-top:var(--space-3)">
-            <div class="an-rate-bar" id="statSavingsBar" style="width:0%;background:var(--income-color)"></div>
-          </div>
+        <div class="card stat-card" id="statSavingsCard">
+          <div class="stat-card-icon stat-icon-savings">🏦</div>
+          <div class="stat-label">Заощадження</div>
+          <div class="stat-value text-income" id="statSavings">0,00 €</div>
+        </div>
+        <div class="card stat-card">
+          <div class="stat-card-icon stat-icon-income">💰</div>
+          <div class="stat-label" id="lbl_income">Дохід</div>
+          <div class="stat-value text-income" id="statIncome">0,00 €</div>
         </div>
       </div>
 

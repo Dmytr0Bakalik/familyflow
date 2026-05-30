@@ -473,6 +473,48 @@
   border-style: dashed;
 }
 
+/* ---- STORE PICKER (animated category replace) ---- */
+.store-picker-wrap {
+  will-change: opacity, transform;
+}
+.store-picker-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+  flex-wrap: wrap;
+}
+.store-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-medium);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.store-back-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.store-picker-title {
+  font-size: var(--text-base);
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+}
+.store-selected-badge {
+  margin-left: auto;
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--accent);
+}
+
 /* ---- MODAL ---- */
 .modal-backdrop {
   position: fixed; inset: 0;

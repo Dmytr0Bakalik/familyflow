@@ -215,93 +215,143 @@ function _renderCategoryGrid(selectedId) {
 
   grid.querySelectorAll('.cat-chip').forEach(btn => {
     btn.addEventListener('click', () => {
-      grid.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      _selectedCategory = btn.dataset.catid;
-      // Update note placeholder with category hint
-      const noteEl = document.getElementById('formNote');
-      if (noteEl && !noteEl.value) {
-        noteEl.placeholder = CAT_HINTS[btn.dataset.catid] || t('add_note_placeholder');
+      const catId = btn.dataset.catid;
+      const subs  = SUBCATEGORIES[catId];
+
+      if (subs && subs.length) {
+        // Has subcategories → animate grid out, show store picker
+        _selectedCategory = catId;
+        _showStorePicker(catId, subs, grid);
+      } else {
+        // No subcategories → just select
+        grid.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        _selectedCategory = catId;
+        document.getElementById('subcatWrap')?.remove();
+        const noteEl = document.getElementById('formNote');
+        if (noteEl && !noteEl.value) noteEl.placeholder = CAT_HINTS[catId] || t('add_note_placeholder');
       }
-      // Render subcategory chips
-      _renderSubcategories(btn.dataset.catid);
     });
   });
-  // Re-render subcategories if already selected
-  if (_selectedCategory) _renderSubcategories(_selectedCategory);
+
+  // If already selected and has subcategories, show picker
+  if (_selectedCategory && SUBCATEGORIES[_selectedCategory]?.length) {
+    _showStorePicker(_selectedCategory, SUBCATEGORIES[_selectedCategory], grid, true /* instant */);
+  }
 }
 
-// ---- Subcategory chips ----
-function _renderSubcategories(catId) {
-  // Remove old wrap if exists
-  const old = document.getElementById('subcatWrap');
-  if (old) old.remove();
+// ---- Store Picker (animated overlay replacing the category grid) ----
+function _showStorePicker(catId, subs, grid, instant = false) {
+  // Remove old picker
+  document.getElementById('storePicker')?.remove();
+  document.getElementById('subcatWrap')?.remove();
 
-  const subs = SUBCATEGORIES[catId];
-  if (!subs || !subs.length) return;
+  const catGroup = grid.closest('.form-group');
+  const catObj   = getAllCategories(_currentType).find(c => c.id === catId);
+  const catLabel = catObj ? (catObj.labelKey ? t(catObj.labelKey) : catObj.label) : catId;
+  const catEmoji = catObj?.emoji || '';
 
-  // Insert after note group
-  const noteGroup = document.getElementById('formNote')?.closest('.form-group');
-  if (!noteGroup) return;
-
-  const wrap = document.createElement('div');
-  wrap.id = 'subcatWrap';
-  wrap.className = 'form-group';
-
-  // Build chips HTML — objects {name, logo?, emoji?, color}
+  // Build store chips HTML
   const chipsHTML = subs.map(sub => {
-    const name    = typeof sub === 'string' ? sub : sub.name;
-    const color   = typeof sub === 'string' ? '#94A3B8' : (sub.color || '#94A3B8');
-    const logoEl  = (typeof sub === 'object' && sub.logo)
+    const name    = sub.name;
+    const color   = sub.color || '#94A3B8';
+    const logoEl  = sub.logo
       ? `<img src="${sub.logo}" class="subcat-logo-img"
-              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
-              alt="${name}">`
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" alt="${name}">`
       : '';
-    const emojiEl = (typeof sub === 'object' && sub.emoji)
+    const emojiEl = sub.emoji
       ? `<span class="subcat-logo-emoji" style="background:${color}22;color:${color}">${sub.emoji}</span>`
-      : (!logoEl ? `<span class="subcat-logo-emoji" style="background:${color}22;color:${color}">🏪</span>` : '');
-    // fallback span (hidden by default, shown on logo error)
-    const fallbackEl = logoEl
+      : '';
+    const fallback = sub.logo
       ? `<span class="subcat-logo-emoji" style="display:none;background:${color}22;color:${color}">🏪</span>`
       : '';
-
     return `
-      <button class="subcat-chip subcat-logo-chip" type="button" data-name="${name}"
-              style="--chip-color:${color}">
-        <div class="subcat-logo-wrap">
-          ${logoEl}${fallbackEl}${emojiEl}
-        </div>
+      <button class="subcat-chip subcat-logo-chip" type="button" data-name="${name}" style="--chip-color:${color}">
+        <div class="subcat-logo-wrap">${logoEl}${fallback}${emojiEl}</div>
         <span class="subcat-chip-name">${name}</span>
       </button>`;
   }).join('');
 
-  wrap.innerHTML = `
-    <label class="form-label">📍 Де / Що саме</label>
-    <div class="subcat-chips">
-      ${chipsHTML}
+  const picker = document.createElement('div');
+  picker.id = 'storePicker';
+  picker.className = 'store-picker-wrap';
+  picker.style.opacity = instant ? '1' : '0';
+  picker.style.transform = instant ? '' : 'translateY(8px)';
+  picker.innerHTML = `
+    <div class="store-picker-header">
+      <button class="store-back-btn" type="button" id="storeBackBtn">← Категорії</button>
+      <span class="store-picker-title">${catEmoji} ${catLabel}</span>
+      <div class="store-selected-badge" id="storeSelectedBadge" style="display:none"></div>
+    </div>
+    <div class="subcat-chips">${chipsHTML}
       <button class="subcat-chip subcat-chip--custom" type="button" id="subcatCustomBtn">
         <div class="subcat-logo-wrap"><span class="subcat-logo-emoji" style="background:var(--accent-dim);color:var(--accent)">✏️</span></div>
         <span class="subcat-chip-name">Своє</span>
       </button>
     </div>`;
 
-  noteGroup.after(wrap);
+  // Slide out category grid, show picker
+  if (!instant) {
+    catGroup.style.transition = 'opacity 0.2s, transform 0.2s';
+    catGroup.style.opacity = '0';
+    catGroup.style.transform = 'translateY(-6px)';
+  }
 
-  // Wire clicks
-  wrap.querySelectorAll('.subcat-logo-chip').forEach(btn => {
+  setTimeout(() => {
+    catGroup.style.display = 'none';
+    // Also hide "add cat" button
+    document.getElementById('btnAddCategory')?.closest('.form-group')?.style.setProperty('display', 'none');
+    catGroup.after(picker);
+
+    requestAnimationFrame(() => {
+      picker.style.transition = 'opacity 0.25s, transform 0.25s';
+      picker.style.opacity = '1';
+      picker.style.transform = 'translateY(0)';
+    });
+  }, instant ? 0 : 200);
+
+  // Wire: Back button
+  picker.querySelector('#storeBackBtn')?.addEventListener('click', () => {
+    picker.remove();
+    catGroup.style.display = '';
+    catGroup.style.opacity = '0';
+    catGroup.style.transform = 'translateY(-6px)';
+    document.getElementById('btnAddCategory')?.closest('.form-group')?.style.setProperty('display', '');
+    requestAnimationFrame(() => {
+      catGroup.style.opacity = '1';
+      catGroup.style.transform = 'translateY(0)';
+    });
+    // Deselect category
+    _selectedCategory = null;
+    catGroup.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('selected'));
+  });
+
+  // Wire: Store chip click
+  picker.querySelectorAll('.subcat-logo-chip').forEach(btn => {
     btn.addEventListener('click', () => {
-      wrap.querySelectorAll('.subcat-chip').forEach(b => b.classList.remove('active'));
+      picker.querySelectorAll('.subcat-chip').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       const noteEl = document.getElementById('formNote');
       if (noteEl) noteEl.value = btn.dataset.name;
+      const badge = document.getElementById('storeSelectedBadge');
+      if (badge) { badge.style.display = 'inline-flex'; badge.textContent = `✓ ${btn.dataset.name}`; }
     });
   });
-  wrap.querySelector('#subcatCustomBtn')?.addEventListener('click', () => {
-    wrap.querySelectorAll('.subcat-chip').forEach(b => b.classList.remove('active'));
+
+  // Wire: Custom input
+  picker.querySelector('#subcatCustomBtn')?.addEventListener('click', () => {
+    picker.querySelectorAll('.subcat-chip').forEach(b => b.classList.remove('active'));
     const noteEl = document.getElementById('formNote');
     if (noteEl) { noteEl.value = ''; noteEl.focus(); }
   });
 }
+
+// ---- Subcategory chips (legacy - now replaced by store picker) ----
+function _renderSubcategories(catId) {
+  // No longer used directly — handled inside _showStorePicker
+}
+
+
 
 
 // ---- Custom category form (inline) ----
