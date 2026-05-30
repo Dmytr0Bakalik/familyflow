@@ -42,14 +42,16 @@ export function removeAvatarSrc(userId) {
 
 // ---- Built-in Expense Categories ----
 export const EXPENSE_CATEGORIES = [
-  { id: 'food',     labelKey: 'cat_food',    emoji: '🍔', color: '#F43F5E', builtin: true },
-  { id: 'online',   labelKey: 'cat_online',  emoji: '🛒', color: '#3B82F6', builtin: true },
-  { id: 'health',   labelKey: 'cat_health',  emoji: '🏥', color: '#14B8A6', builtin: true },
-  { id: 'housing',  labelKey: 'cat_housing', emoji: '🏠', color: '#8B5CF6', builtin: true },
-  { id: 'ticket',   labelKey: 'cat_ticket',  emoji: '🎫', color: '#F59E0B', builtin: true },
-  { id: 'misc',     labelKey: 'cat_misc',    emoji: '🪙', color: '#94A3B8', builtin: true },
-  { id: 'clothes',  labelKey: 'cat_clothes', emoji: '👕', color: '#EC4899', builtin: true },
-  { id: 'extra',    labelKey: 'cat_extra',   emoji: '➕', color: '#6366F1', builtin: true },
+  { id: 'food',    labelKey: 'cat_food',    emoji: '🍔', color: '#F43F5E', builtin: true },
+  { id: 'online',  labelKey: 'cat_online',  emoji: '🛒', color: '#3B82F6', builtin: true },
+  { id: 'health',  labelKey: 'cat_health',  emoji: '🏥', color: '#14B8A6', builtin: true },
+  { id: 'housing', labelKey: 'cat_housing', emoji: '🏠', color: '#8B5CF6', builtin: true },
+  { id: 'ticket',  labelKey: 'cat_ticket',  emoji: '🎫', color: '#F59E0B', builtin: true },
+  { id: 'misc',    labelKey: 'cat_misc',    emoji: '🪙', color: '#94A3B8', builtin: true },
+  { id: 'clothes', labelKey: 'cat_clothes', emoji: '👕', color: '#EC4899', builtin: true },
+  { id: 'subs',    labelKey: 'cat_subs',   emoji: '📡', color: '#8B5CF6', builtin: true },
+  { id: 'extra',   labelKey: 'cat_extra',   emoji: '➕', color: '#6366F1', builtin: true },
+  { id: 'internet',labelKey: 'cat_internet',emoji: '💻', color: '#6B7280', builtin: true },
 ];
 
 // ---- Built-in Income Categories ----
@@ -64,16 +66,86 @@ export const INCOME_CATEGORIES = [
 // Shape: { id: 'custom_xxx', label: 'My Cat', emoji: '🌟', color: '#hex', type: 'expense'|'income', builtin: false }
 let _customCategories = [];
 
-// ---- Subcategories (quick-fill for note field) ----
+// ---- Subcategories (store/service logos for quick-fill) ----
+// Each item: { name, logo? (URL), emoji? (fallback), color (brand color) }
 export const SUBCATEGORIES = {
-  food:    ['Lidl','Aldi','Netto','Kaufland','Turkish Market','Billa','Rewe','Spar'],
-  online:  ['AliExpress','eBay','Amazon','Temu','Shein','Otto','Zalando'],
-  health:  ['Ліки','DM Drogerie','Rossmann','Müller','Apotheke','Лікар','Аналізи'],
-  housing: ['Оренда','Комунальні','Страховка','Газ','Електрика','Інтернет вдома'],
-  misc:    ['Woolworths','KiK','Action','Tedi','Дрібниці'],
-  ticket:  ['Кіно','Концерт','Театр','Музей','Транспорт','Квиток'],
-  extra:   ['Netflix','Spotify','Amazon Prime','YouTube','Disney+','Apple','Інша підписка'],
-  internet:['A1','Magenta','Drei','Hutchison','YouTube Premium','Apple One','Інше'],
+  food: [
+    { name: 'Lidl',           logo: 'https://logo.clearbit.com/lidl.de',         color: '#0050AA' },
+    { name: 'Kaufland',       logo: 'https://logo.clearbit.com/kaufland.de',      color: '#CC0000' },
+    { name: 'Aldi Nord',      logo: 'https://logo.clearbit.com/aldi-nord.de',     color: '#1E3A8A' },
+    { name: 'Netto',          logo: 'https://logo.clearbit.com/netto-online.de',  color: '#E8BC00' },
+    { name: 'Rewe',           logo: 'https://logo.clearbit.com/rewe.de',          color: '#CC0000' },
+    { name: 'Penny',          logo: 'https://logo.clearbit.com/penny.de',         color: '#CC0000' },
+    { name: 'Billa',          logo: 'https://logo.clearbit.com/billa.at',         color: '#E85D04' },
+    { name: 'Spar',           logo: 'https://logo.clearbit.com/spar.at',          color: '#007A33' },
+    { name: 'Türkischer',     emoji: '🫒',                                        color: '#C41E3A' },
+    { name: 'Restaurant',     emoji: '🍽️',                                        color: '#F59E0B' },
+  ],
+  online: [
+    { name: 'AliExpress',     logo: 'https://logo.clearbit.com/aliexpress.com',   color: '#FF4747' },
+    { name: 'Amazon',         logo: 'https://logo.clearbit.com/amazon.de',        color: '#FF9900' },
+    { name: 'eBay',           logo: 'https://logo.clearbit.com/ebay.de',          color: '#0064D2' },
+    { name: 'Temu',           logo: 'https://logo.clearbit.com/temu.com',         color: '#FF6600' },
+    { name: 'Zalando',        logo: 'https://logo.clearbit.com/zalando.de',       color: '#FF6900' },
+    { name: 'Otto',           logo: 'https://logo.clearbit.com/otto.de',          color: '#E30613' },
+    { name: 'Shein',          logo: 'https://logo.clearbit.com/shein.com',        color: '#000000' },
+  ],
+  health: [
+    { name: 'Rossmann',       logo: 'https://logo.clearbit.com/rossmann.de',      color: '#CC0000' },
+    { name: 'DM',             logo: 'https://logo.clearbit.com/dm.de',            color: '#CC0000' },
+    { name: 'Müller',         logo: 'https://logo.clearbit.com/mueller.de',       color: '#0066CC' },
+    { name: 'Apotheke',       emoji: '💊',                                        color: '#16A34A' },
+    { name: 'Лікар',          emoji: '🩺',                                        color: '#0EA5E9' },
+    { name: 'Аналізи',        emoji: '🔬',                                        color: '#8B5CF6' },
+  ],
+  housing: [
+    { name: 'Оренда',         emoji: '🏠',  color: '#8B5CF6' },
+    { name: 'Комунальні',     emoji: '💡',  color: '#F59E0B' },
+    { name: 'Газ',            emoji: '🔥',  color: '#F97316' },
+    { name: 'Електрика',      emoji: '⚡',  color: '#EAB308' },
+    { name: 'Страховка',      emoji: '🛡️', color: '#6366F1' },
+    { name: 'Ремонт',         emoji: '🔧',  color: '#94A3B8' },
+  ],
+  misc: [
+    { name: 'Woolworths',     logo: 'https://logo.clearbit.com/woolworths.com.au', color: '#007B3E' },
+    { name: 'KiK',            logo: 'https://logo.clearbit.com/kik.de',            color: '#E30613' },
+    { name: 'Action',         logo: 'https://logo.clearbit.com/action.com',        color: '#E30613' },
+    { name: 'Tedi',           emoji: '🧸',                                          color: '#FF6600' },
+    { name: 'Інше',           emoji: '🪙',                                          color: '#94A3B8' },
+  ],
+  ticket: [
+    { name: 'Кіно',           emoji: '🎬',  color: '#6366F1' },
+    { name: 'Концерт',        emoji: '🎵',  color: '#EC4899' },
+    { name: 'Театр',          emoji: '🎭',  color: '#8B5CF6' },
+    { name: 'Транспорт',      emoji: '🚆',  color: '#3B82F6' },
+    { name: 'Музей',          emoji: '🏛️', color: '#F59E0B' },
+  ],
+  subs: [
+    { name: 'Netflix',      logo: 'https://logo.clearbit.com/netflix.com',    color: '#E50914' },
+    { name: 'Spotify',      logo: 'https://logo.clearbit.com/spotify.com',    color: '#1DB954' },
+    { name: 'YouTube',      logo: 'https://logo.clearbit.com/youtube.com',    color: '#FF0000' },
+    { name: 'Disney+',      logo: 'https://logo.clearbit.com/disneyplus.com', color: '#0063E5' },
+    { name: 'Amazon Prime', logo: 'https://logo.clearbit.com/amazon.de',      color: '#00A8E1' },
+    { name: 'Apple',        logo: 'https://logo.clearbit.com/apple.com',      color: '#555555' },
+    { name: 'ChatGPT',      logo: 'https://logo.clearbit.com/openai.com',     color: '#10A37F' },
+    { name: 'Adobe',        logo: 'https://logo.clearbit.com/adobe.com',      color: '#FF0000' },
+    { name: 'Інша',         emoji: '📦',                                         color: '#6366F1' },
+  ],
+  extra: [
+    { name: 'Netflix',        logo: 'https://logo.clearbit.com/netflix.com',     color: '#E50914' },
+    { name: 'Spotify',        logo: 'https://logo.clearbit.com/spotify.com',     color: '#1DB954' },
+    { name: 'Amazon Prime',   logo: 'https://logo.clearbit.com/amazon.de',       color: '#00A8E1' },
+    { name: 'YouTube',        logo: 'https://logo.clearbit.com/youtube.com',     color: '#FF0000' },
+    { name: 'Disney+',        logo: 'https://logo.clearbit.com/disneyplus.com',  color: '#0063E5' },
+    { name: 'Apple',          logo: 'https://logo.clearbit.com/apple.com',       color: '#555555' },
+  ],
+  internet: [
+    { name: 'A1',             logo: 'https://logo.clearbit.com/a1.net',           color: '#E30613' },
+    { name: 'Magenta',        logo: 'https://logo.clearbit.com/magenta.at',       color: '#E20074' },
+    { name: 'Drei',           logo: 'https://logo.clearbit.com/drei.at',          color: '#EE0033' },
+    { name: 'Hutchison',      emoji: '📡',                                         color: '#FF6600' },
+    { name: 'Інтернет',       emoji: '🌐',                                         color: '#3B82F6' },
+  ],
 };
 
 export function setCustomCategories(cats) { _customCategories = cats || []; }

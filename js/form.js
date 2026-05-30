@@ -233,41 +233,76 @@ function _renderCategoryGrid(selectedId) {
 
 // ---- Subcategory chips ----
 function _renderSubcategories(catId) {
-  let wrap = document.getElementById('subcatWrap');
+  // Remove old wrap if exists
+  const old = document.getElementById('subcatWrap');
+  if (old) old.remove();
+
   const subs = SUBCATEGORIES[catId];
-  if (!subs || !subs.length) {
-    if (wrap) wrap.innerHTML = '';
-    return;
-  }
-  if (!wrap) {
-    // Insert after note group
-    const noteGroup = document.getElementById('formNote')?.closest('.form-group');
-    if (!noteGroup) return;
-    wrap = document.createElement('div');
-    wrap.id = 'subcatWrap';
-    wrap.className = 'form-group';
-    noteGroup.after(wrap);
-  }
+  if (!subs || !subs.length) return;
+
+  // Insert after note group
+  const noteGroup = document.getElementById('formNote')?.closest('.form-group');
+  if (!noteGroup) return;
+
+  const wrap = document.createElement('div');
+  wrap.id = 'subcatWrap';
+  wrap.className = 'form-group';
+
+  // Build chips HTML — objects {name, logo?, emoji?, color}
+  const chipsHTML = subs.map(sub => {
+    const name    = typeof sub === 'string' ? sub : sub.name;
+    const color   = typeof sub === 'string' ? '#94A3B8' : (sub.color || '#94A3B8');
+    const logoEl  = (typeof sub === 'object' && sub.logo)
+      ? `<img src="${sub.logo}" class="subcat-logo-img"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+              alt="${name}">`
+      : '';
+    const emojiEl = (typeof sub === 'object' && sub.emoji)
+      ? `<span class="subcat-logo-emoji" style="background:${color}22;color:${color}">${sub.emoji}</span>`
+      : (!logoEl ? `<span class="subcat-logo-emoji" style="background:${color}22;color:${color}">🏪</span>` : '');
+    // fallback span (hidden by default, shown on logo error)
+    const fallbackEl = logoEl
+      ? `<span class="subcat-logo-emoji" style="display:none;background:${color}22;color:${color}">🏪</span>`
+      : '';
+
+    return `
+      <button class="subcat-chip subcat-logo-chip" type="button" data-name="${name}"
+              style="--chip-color:${color}">
+        <div class="subcat-logo-wrap">
+          ${logoEl}${fallbackEl}${emojiEl}
+        </div>
+        <span class="subcat-chip-name">${name}</span>
+      </button>`;
+  }).join('');
+
   wrap.innerHTML = `
     <label class="form-label">📍 Де / Що саме</label>
-    <div class="subcat-chips" id="subcatChips">
-      ${subs.map(s => `<button class="subcat-chip" type="button">${s}</button>`).join('')}
-      <button class="subcat-chip subcat-chip--custom" type="button" id="subcatCustomBtn">✏️ Своє</button>
-    </div>
-  `;
-  wrap.querySelectorAll('.subcat-chip:not(.subcat-chip--custom)').forEach(btn => {
+    <div class="subcat-chips">
+      ${chipsHTML}
+      <button class="subcat-chip subcat-chip--custom" type="button" id="subcatCustomBtn">
+        <div class="subcat-logo-wrap"><span class="subcat-logo-emoji" style="background:var(--accent-dim);color:var(--accent)">✏️</span></div>
+        <span class="subcat-chip-name">Своє</span>
+      </button>
+    </div>`;
+
+  noteGroup.after(wrap);
+
+  // Wire clicks
+  wrap.querySelectorAll('.subcat-logo-chip').forEach(btn => {
     btn.addEventListener('click', () => {
       wrap.querySelectorAll('.subcat-chip').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       const noteEl = document.getElementById('formNote');
-      if (noteEl) { noteEl.value = btn.textContent; }
+      if (noteEl) noteEl.value = btn.dataset.name;
     });
   });
   wrap.querySelector('#subcatCustomBtn')?.addEventListener('click', () => {
+    wrap.querySelectorAll('.subcat-chip').forEach(b => b.classList.remove('active'));
     const noteEl = document.getElementById('formNote');
     if (noteEl) { noteEl.value = ''; noteEl.focus(); }
   });
 }
+
 
 // ---- Custom category form (inline) ----
 function _openCustomCategoryForm() {

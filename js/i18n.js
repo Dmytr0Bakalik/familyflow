@@ -114,7 +114,9 @@ export const TRANSLATIONS = {
     cat_ticket: 'Тікет',
     cat_misc: 'Дрібниці',
     cat_clothes: 'Одяг',
+    cat_subs: 'Підписки',
     cat_extra: 'Додаткові',
+    cat_internet: 'Інтернет',
     // Categories — Income
     cat_salary: 'Зарплата',
     cat_sidejob: 'Підробіток',
