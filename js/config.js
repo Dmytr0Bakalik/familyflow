@@ -144,7 +144,9 @@ export function getCustomCategories() { return _customCategories; }
 
 export function getAllCategories(type = 'expense') {
   const builtin = type === 'expense' ? EXPENSE_CATEGORIES : INCOME_CATEGORIES;
-  const custom  = _customCategories.filter(c => c.type === type);
+  const builtinIds = new Set(builtin.map(c => c.id));
+  // Exclude custom cats that duplicate a built-in id (e.g. old Firebase 'internet' entry)
+  const custom = _customCategories.filter(c => c.type === type && !builtinIds.has(c.id));
   return [...builtin, ...custom];
 }
 
