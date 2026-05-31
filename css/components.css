@@ -1122,3 +1122,51 @@
   color: var(--text-muted);
   margin-top: 2px;
 }
+
+.short-report-cat-wrap {
+  border-bottom: 1px solid var(--border);
+}
+.short-report-cat-wrap:last-child {
+  border-bottom: none;
+}
+.short-report-cat-item {
+  border-bottom: none !important; /* Managed by wrap */
+}
+.short-report-tx-list {
+  padding: 0 var(--space-4) var(--space-3) calc(40px + var(--space-3));
+  animation: fadeIn 0.3s ease;
+}
+.short-report-tx-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  font-size: var(--text-sm);
+  border-bottom: 1px dashed var(--border);
+}
+.short-report-tx-item:last-child {
+  border-bottom: none;
+}
+.short-report-tx-date {
+  font-weight: var(--fw-bold);
+  color: var(--text-muted);
+  min-width: 20px;
+}
+.short-report-tx-desc {
+  flex: 1;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.short-report-tx-who {
+  width: 20px; height: 20px;
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+.short-report-tx-amount {
+  font-weight: var(--fw-semibold);
+  color: var(--text-primary);
+}

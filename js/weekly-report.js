@@ -9,21 +9,24 @@ import { USERS } from './auth.js';
 let _activeWeekIndex = -1; // -1 means "Total" (Загальний огляд)
 
 // ---- Week splitting logic ----
-// Strict days: 1-7, 8-14, 15-21, 22-28, 29-end
+// Calendar weeks (Monday - Sunday)
 export function getWeeksOfMonth(yearMonth) {
   if (!yearMonth) return [];
   const [y, m] = yearMonth.split('-');
   const daysInMonth = new Date(Number(y), Number(m), 0).getDate();
+  const firstDate = new Date(Number(y), Number(m) - 1, 1);
+  let dayOfWeek = firstDate.getDay();
+  if (dayOfWeek === 0) dayOfWeek = 7; // Convert Sun(0) to 7
   
   const weeks = [];
   let currentStart = 1;
   let weekNum = 1;
   
+  // Week 1 ends on the first Sunday
+  let currentEnd = 7 - dayOfWeek + 1;
+  if (currentEnd > daysInMonth) currentEnd = daysInMonth;
+  
   while (currentStart <= daysInMonth) {
-    let currentEnd = currentStart + 6;
-    if (currentEnd > 28) currentEnd = daysInMonth; // 5th week takes the rest
-    if (currentStart === 29) currentEnd = daysInMonth;
-    
     weeks.push({
       index: weekNum - 1,
       label: `Тиждень ${weekNum}`,
@@ -32,6 +35,8 @@ export function getWeeksOfMonth(yearMonth) {
     });
     
     currentStart = currentEnd + 1;
+    currentEnd = currentStart + 6;
+    if (currentEnd > daysInMonth) currentEnd = daysInMonth;
     weekNum++;
   }
   
@@ -104,18 +109,38 @@ function renderShortReportContent() {
   const byCat = getExpensesByCategory(expenses);
   const topCategoriesHtml = byCat.length ? byCat.map(c => {
     const pct = totalExp > 0 ? Math.round(c.amount / totalExp * 100) : 0;
+    
+    // Transactions for this category
+    const catTxs = expenses.filter(t => t.category === c.id);
+    const txHtml = catTxs.map(t => {
+      const user = USERS.find(u => u.id === t.userId);
+      return `
+        <div class="short-report-tx-item">
+          <div class="short-report-tx-date">${t.date.split('-')[2]}</div>
+          <div class="short-report-tx-desc">${t.description || c.label}</div>
+          <div class="short-report-tx-who" style="background:${c.color}22;color:${c.color}">${user ? user.avatar : '👤'}</div>
+          <div class="short-report-tx-amount">−${formatAmount(t.amount)}</div>
+        </div>
+      `;
+    }).join('');
+
     return `
-      <div class="short-report-cat-item">
-        <div class="short-report-cat-icon" style="background:${c.color}22;color:${c.color}">${c.emoji}</div>
-        <div class="short-report-cat-info">
-          <div class="short-report-cat-name">${c.label}</div>
-          <div class="short-report-cat-bar-wrap">
-            <div class="short-report-cat-bar" style="width:${pct}%;background:${c.color}"></div>
+      <div class="short-report-cat-wrap">
+        <div class="short-report-cat-item" style="cursor:pointer">
+          <div class="short-report-cat-icon" style="background:${c.color}22;color:${c.color}">${c.emoji}</div>
+          <div class="short-report-cat-info">
+            <div class="short-report-cat-name">${c.label}</div>
+            <div class="short-report-cat-bar-wrap">
+              <div class="short-report-cat-bar" style="width:${pct}%;background:${c.color}"></div>
+            </div>
+          </div>
+          <div class="short-report-cat-right">
+            <div class="short-report-cat-amount">${formatAmount(c.amount)}</div>
+            <div class="short-report-cat-pct">${pct}%</div>
           </div>
         </div>
-        <div class="short-report-cat-right">
-          <div class="short-report-cat-amount">${formatAmount(c.amount)}</div>
-          <div class="short-report-cat-pct">${pct}%</div>
+        <div class="short-report-tx-list" style="display:none">
+          ${txHtml}
         </div>
       </div>
     `;
@@ -155,6 +180,18 @@ function renderShortReportContent() {
       <div>${topCategoriesHtml}</div>
     </div>
   `;
+  
+  // Bind category clicks to toggle transaction lists
+  container.querySelectorAll('.short-report-cat-wrap').forEach(wrap => {
+    const header = wrap.querySelector('.short-report-cat-item');
+    const txList = wrap.querySelector('.short-report-tx-list');
+    header.addEventListener('click', () => {
+      const isVisible = txList.style.display === 'block';
+      txList.style.display = isVisible ? 'none' : 'block';
+      if (!isVisible) header.style.borderBottomColor = 'transparent';
+      else header.style.borderBottomColor = ''; // restore CSS
+    });
+  });
 }
 
 // ---- Setup & Toggle Logic ----
