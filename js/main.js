@@ -109,22 +109,36 @@ async function connectData() {
 
   if (storage) {
     // Custom categories
-    _unsubscribeCats = storage.listenCustomCategories(cats => setCustomCategories(cats));
+    try {
+      _unsubscribeCats = storage.listenCustomCategories(cats => setCustomCategories(cats));
+    } catch (e) { console.warn('[Firebase] listenCustomCategories:', e.message); }
 
-    // Transactions (real-time)
-    _unsubscribeTx = storage.listenTransactions(txList => {
-      state.transactions = txList;
-      renderStatCards();
-      renderWhoSpent();
-      renderRecentTransactions();
-      if (_activeTab === 'history')   renderTransactionList();
-      if (_activeTab === 'analytics') { destroyCharts(); renderAllCharts(); }
-    });
+    // Transactions (real-time) — most critical, must not throw
+    try {
+      _unsubscribeTx = storage.listenTransactions(txList => {
+        state.transactions = txList;
+        renderStatCards();
+        renderWhoSpent();
+        renderRecentTransactions();
+        if (_activeTab === 'history')   renderTransactionList();
+        if (_activeTab === 'analytics') { destroyCharts(); renderAllCharts(); }
+      });
+    } catch (e) { console.warn('[Firebase] listenTransactions:', e.message); }
 
-    // Load income
-    const user = getCurrentUser();
-    if (user) {
-      state.income = await storage.getIncome(user.id, state.currentMonth);
+    // Load income — wrapped separately: Permission denied here must NOT crash the app
+    try {
+      const user = getCurrentUser();
+      if (user) {
+        state.income = await storage.getIncome(user.id, state.currentMonth);
+      }
+    } catch (e) {
+      console.warn('[Firebase] getIncome permission denied — falling back to localStorage:', e.message);
+      // Fallback: use localStorage income if Firebase rules block /income path
+      const user = getCurrentUser();
+      if (user) {
+        const raw = localStorage.getItem(`ff_income_${user.id}_${state.currentMonth}`);
+        try { state.income = raw ? JSON.parse(raw) : { card: 0, cash: 0 }; } catch {}
+      }
     }
   } else {
     // Offline — use localStorage transactions
@@ -134,6 +148,7 @@ async function connectData() {
     }
   }
 }
+
 
 // ============================================================
 // APP SHELL
