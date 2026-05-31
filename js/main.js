@@ -14,6 +14,7 @@ import { openAddModal, setupModal } from './form.js';
 import { setupFilters } from './filters.js';
 import { renderAllCharts, renderAnalyticsDashboard, destroyCharts } from './charts.js';
 import { renderCalendar, setupCalendar } from './calendar.js';
+import { exportAllCSV, exportCurrentMonthCSV, exportWeeklySummary, exportMonthlySummary } from './export.js';
 
 let _activeTab = 'home';
 let _unsubscribeTx   = null;
@@ -304,6 +305,24 @@ function setupSettingsActions() {
   document.getElementById('settingsLangToggle')?.addEventListener('click', () => {
     document.getElementById('appLangToggle')?.click();
     updateLangBtns();
+  });
+
+  // ---- Export buttons ----
+  document.getElementById('btnExportMonth')?.addEventListener('click', () => {
+    exportCurrentMonthCSV();
+    showToast('📊 Завантаження CSV...');
+  });
+  document.getElementById('btnExportAll')?.addEventListener('click', () => {
+    exportAllCSV();
+    showToast('🗄️ Завантаження повної бази...');
+  });
+  document.getElementById('btnExportWeek')?.addEventListener('click', () => {
+    exportWeeklySummary();
+    showToast('📋 Тижневий звіт завантажується...');
+  });
+  document.getElementById('btnExportMonthReport')?.addEventListener('click', () => {
+    exportMonthlySummary();
+    showToast('📈 Місячний звіт завантажується...');
   });
 }
 
