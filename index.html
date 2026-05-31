@@ -13,7 +13,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
@@ -217,43 +217,62 @@
     <!-- ======= ANALYTICS ======= -->
     <div class="tab-panel" data-panel="analytics">
 
-      <h2 style="font-size:var(--text-xl);font-weight:var(--fw-bold);margin-bottom:var(--space-5)" id="lbl_analytics_title">Аналіз витрат</h2>
-
-      <!-- KPI row -->
-      <div class="an-kpi-row" id="anKpiRow"></div>
-
-      <!-- Savings Rate bar -->
-      <div class="card an-savings-card" id="anSavingsCard"></div>
-
-      <!-- AI Insights -->
-      <div class="card an-insights-card" id="anInsights"></div>
-
-      <!-- Financial Leaks -->
-      <div class="card an-leaks-card" id="anLeaks"></div>
-
-      <!-- Charts -->
-      <div class="analytics-grid">
-        <!-- Who spent -->
-        <div class="chart-card card">
-          <div class="chart-card-title">👥 <span id="lbl_who_spent2">Хто скільки витратив</span></div>
-          <canvas id="chartMembers" height="180"></canvas>
-        </div>
-        <!-- Category bar by month -->
-        <div class="chart-card card">
-          <div class="chart-card-title">📊 Категорії по місяцях</div>
-          <canvas id="chartCatBar" height="200"></canvas>
-        </div>
-        <!-- Trend -->
-        <div class="chart-card card">
-          <div class="chart-card-title">📈 Тренд за 6 місяців</div>
-          <canvas id="chartTrend" height="200"></canvas>
-        </div>
-        <!-- Cash Flow -->
-        <div class="chart-card card">
-          <div class="chart-card-title">💸 Cash Flow (цей місяць)</div>
-          <canvas id="chartCashFlow" height="180"></canvas>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-5)">
+        <h2 style="font-size:var(--text-xl);font-weight:var(--fw-bold)" id="lbl_analytics_title">Аналіз витрат</h2>
+        <div class="form-type-toggle" style="width:auto;padding:3px;margin:0">
+          <button class="type-btn active" id="btnViewGeneral">📊 Загальний</button>
+          <button class="type-btn" id="btnViewShort">📋 Короткий</button>
         </div>
       </div>
+
+      <!-- General Analytics View -->
+      <div id="analyticsGeneral">
+        <!-- KPI row -->
+        <div class="an-kpi-row" id="anKpiRow"></div>
+
+        <!-- Savings Rate bar -->
+        <div class="card an-savings-card" id="anSavingsCard"></div>
+
+        <!-- AI Insights -->
+        <div class="card an-insights-card" id="anInsights"></div>
+
+        <!-- Financial Leaks -->
+        <div class="card an-leaks-card" id="anLeaks"></div>
+
+        <!-- Charts -->
+        <div class="analytics-grid">
+          <!-- Who spent -->
+          <div class="chart-card card">
+            <div class="chart-card-title">👥 <span id="lbl_who_spent2">Хто скільки витратив</span></div>
+            <canvas id="chartMembers" height="180"></canvas>
+          </div>
+          <!-- Category bar by month -->
+          <div class="chart-card card">
+            <div class="chart-card-title">📊 Категорії по місяцях</div>
+            <canvas id="chartCatBar" height="200"></canvas>
+          </div>
+          <!-- Trend -->
+          <div class="chart-card card">
+            <div class="chart-card-title">📈 Тренд за 6 місяців</div>
+            <canvas id="chartTrend" height="200"></canvas>
+          </div>
+          <!-- Cash Flow -->
+          <div class="chart-card card">
+            <div class="chart-card-title">💸 Cash Flow (цей місяць)</div>
+            <canvas id="chartCashFlow" height="180"></canvas>
+          </div>
+        </div>
+      </div><!-- /analyticsGeneral -->
+
+      <!-- Short Weekly Report View -->
+      <div id="analyticsShortReport" style="display:none">
+        <div class="week-nav" id="weekNavContainer">
+          <!-- Populated by JS -->
+        </div>
+        <div id="shortReportContent">
+          <!-- Populated by JS -->
+        </div>
+      </div><!-- /analyticsShortReport -->
 
     </div><!-- /analytics -->
 
@@ -297,6 +316,10 @@
           <button class="theme-option" id="btnThemePink">
             <div class="theme-option-preview theme-pink-preview">🌸</div>
             <span id="lbl_theme_pink">Рожева</span>
+          </button>
+          <button class="theme-option" id="btnThemeCrimson">
+            <div class="theme-option-preview" style="background:#000;border:2px solid #E50D25;color:#E50D25">🔴</div>
+            <span id="lbl_theme_crimson">Робоча (Червона)</span>
           </button>
         </div>
       </div>

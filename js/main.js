@@ -15,6 +15,8 @@ import { setupFilters } from './filters.js';
 import { renderAllCharts, renderAnalyticsDashboard, destroyCharts } from './charts.js';
 import { renderCalendar, setupCalendar } from './calendar.js';
 import { exportAllCSV, exportCurrentMonthCSV, exportWeeklySummary, exportMonthlySummary } from './export.js';
+import { setupWeeklyReport, updateWeeklyReportIfActive } from './weekly-report.js';
+
 
 let _activeTab = 'home';
 let _unsubscribeTx   = null;
@@ -122,7 +124,7 @@ async function connectData() {
         renderWhoSpent();
         renderRecentTransactions();
         if (_activeTab === 'history')   renderTransactionList();
-        if (_activeTab === 'analytics') { destroyCharts(); renderAllCharts(); }
+        if (_activeTab === 'analytics') { destroyCharts(); renderAllCharts(); updateWeeklyReportIfActive(); }
       });
     } catch (e) { console.warn('[Firebase] listenTransactions:', e.message); }
 
@@ -202,6 +204,7 @@ function setupHeaderActions() {
     renderAll();
     destroyCharts(); renderAllCharts();
     setupFilters();
+    setupWeeklyReport();
   });
 
   document.getElementById('appThemeToggle')?.addEventListener('click', () => {
@@ -218,7 +221,11 @@ function setupHeaderActions() {
 
 function updateThemeBtn(theme) {
   const btn = document.getElementById('appThemeToggle');
-  if (btn) btn.textContent = theme === 'pink' ? '🌙' : '🌸';
+  if (btn) {
+    if (theme === 'pink') btn.textContent = '🌸';
+    else if (theme === 'crimson') btn.textContent = '🔴';
+    else btn.textContent = '🌿';
+  }
 }
 
 function setupSettingsActions() {
@@ -301,6 +308,9 @@ function setupSettingsActions() {
   document.getElementById('btnThemePink')?.addEventListener('click', () => {
     setTheme('pink'); updateThemeBtn('pink'); destroyCharts(); renderAllCharts();
   });
+  document.getElementById('btnThemeCrimson')?.addEventListener('click', () => {
+    setTheme('crimson'); updateThemeBtn('crimson'); destroyCharts(); renderAllCharts();
+  });
 
   document.getElementById('settingsLangToggle')?.addEventListener('click', () => {
     document.getElementById('appLangToggle')?.click();
@@ -349,7 +359,7 @@ function setupMonthNav() {
     const d = new Date(y, m - 2, 1);
     state.currentMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
     renderMonthLabel(); renderStatCards(); renderWhoSpent();
-    renderRecentTransactions(); destroyCharts(); renderAllCharts();
+    renderRecentTransactions(); destroyCharts(); renderAllCharts(); updateWeeklyReportIfActive();
   });
   document.getElementById('nextMonth')?.addEventListener('click', () => {
     const [y, m] = state.currentMonth.split('-').map(Number);
@@ -357,7 +367,7 @@ function setupMonthNav() {
     if (d > new Date()) return;
     state.currentMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
     renderMonthLabel(); renderStatCards(); renderWhoSpent();
-    renderRecentTransactions(); destroyCharts(); renderAllCharts();
+    renderRecentTransactions(); destroyCharts(); renderAllCharts(); updateWeeklyReportIfActive();
   });
 }
 

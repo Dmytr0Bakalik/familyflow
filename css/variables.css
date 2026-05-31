@@ -117,6 +117,55 @@
   --theme-name: "pink";
 }
 
+/* ---- CRIMSON THEME (Work mode) ---- */
+[data-theme="crimson"] {
+  /* Backgrounds */
+  --bg-primary:    #000000;
+  --bg-secondary:  #111111;
+  --bg-card:       #151515;
+  --bg-card-hover: #1E1E1E;
+  --bg-input:      #222222;
+  --bg-overlay:    rgba(0,0,0,0.8);
+  --bg-modal:      #111111;
+
+  /* Accent — Crimson Red */
+  --accent:        #E50D25;
+  --accent-dim:    #E50D2522;
+  --accent-hover:  #CC0B20;
+  --accent-glow:   0 0 24px #E50D2544;
+
+  /* Text */
+  --text-primary:   #FFFFFF;
+  --text-secondary: #D3D3D3;
+  --text-muted:     #A7A7A7;
+  --text-inverse:   #000000;
+
+  /* Semantic */
+  --income-color:   #FFFFFF;
+  --income-dim:     #FFFFFF22;
+  --expense-color:  #E50D25;
+  --expense-dim:    #E50D2522;
+
+  /* Borders */
+  --border:         rgba(255,255,255,0.1);
+  --border-strong:  rgba(255,255,255,0.2);
+
+  /* Shadows */
+  --shadow-sm:  0 2px 8px rgba(0,0,0,0.5);
+  --shadow-md:  0 4px 20px rgba(0,0,0,0.6);
+  --shadow-lg:  0 8px 40px rgba(0,0,0,0.8);
+  --shadow-accent: 0 4px 20px rgba(229,13,37,0.3);
+
+  /* Nav */
+  --nav-bg:     #0A0A0A;
+  --nav-border: rgba(255,255,255,0.1);
+
+  /* Font specific to crimson theme */
+  --font-main:  'Montserrat', system-ui, sans-serif;
+
+  --theme-name: "crimson";
+}
+
 /* ---- Spacing scale ---- */
 :root {
   --space-1: 4px;

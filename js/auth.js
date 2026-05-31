@@ -38,7 +38,9 @@ export function getTheme() {
 
 export function toggleTheme() {
   const current = getTheme();
-  const next = current === 'dark' ? 'pink' : 'dark';
+  let next = 'dark';
+  if (current === 'dark') next = 'pink';
+  else if (current === 'pink') next = 'crimson';
   applyTheme(next);
   const user = getCurrentUser();
   if (user) localStorage.setItem(`ff_theme_${user.id}`, next);
