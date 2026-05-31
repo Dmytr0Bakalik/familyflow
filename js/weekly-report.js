@@ -48,15 +48,15 @@ function renderWeekNav() {
   let html = '';
   weeks.forEach(w => {
     const isActive = _activeWeekIndex === w.index ? 'active' : '';
-    const dateRange = `${w.start}-${w.end}`;
-    html += `<button class="week-btn ${isActive}" data-index="${w.index}">
-      ${w.label} <span style="font-size:11px;opacity:0.7">(${dateRange})</span>
+    const num = w.index + 1; // 1, 2, 3...
+    html += `<button class="week-btn ${isActive}" data-index="${w.index}" style="min-width: 40px; text-align: center; padding: var(--space-2)">
+      ${num}
     </button>`;
   });
   
   const isTotalActive = _activeWeekIndex === -1 ? 'active' : '';
-  html += `<button class="week-btn ${isTotalActive}" data-index="-1">
-    Загальний огляд
+  html += `<button class="week-btn ${isTotalActive}" data-index="-1" style="padding: var(--space-2) var(--space-3)">
+    Загальний
   </button>`;
   
   container.innerHTML = html;
