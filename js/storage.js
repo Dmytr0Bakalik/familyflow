@@ -35,15 +35,28 @@ export function isConnected() { return _connected; }
 
 export async function addTransaction(tx) {
   if (!_connected) return _localAdd('transactions', tx);
-  const r = push(ref(db, 'transactions'));
-  const data = { ...tx, id: r.key, createdAt: Date.now() };
-  await set(r, data);
-  return data;
+  try {
+    const r = push(ref(db, 'transactions'));
+    const data = { ...tx, id: r.key, createdAt: Date.now() };
+    await set(r, data);
+    return data;
+  } catch(e) {
+    console.error('[Firebase] addTransaction FAILED:', e.message);
+    // Fallback: save to localStorage so data isn't lost
+    const saved = _localAdd('transactions', tx);
+    throw new Error('Firebase write failed — saved locally: ' + e.message);
+  }
 }
 
 export async function updateTransaction(id, tx) {
   if (!_connected) return _localUpdate('transactions', id, tx);
-  await update(ref(db, `transactions/${id}`), tx);
+  try {
+    await update(ref(db, `transactions/${id}`), tx);
+  } catch(e) {
+    console.error('[Firebase] updateTransaction FAILED:', e.message);
+    _localUpdate('transactions', id, tx);
+    throw new Error('Firebase update failed — saved locally: ' + e.message);
+  }
 }
 
 export async function deleteTransaction(id) {
@@ -66,7 +79,12 @@ export function listenTransactions(callback) {
     });
     callback(list);
   };
-  onValue(r, handler);
+  const errHandler = err => {
+    console.error('[Firebase] listenTransactions PERMISSION ERROR:', err.message);
+    // Try localStorage fallback
+    callback(_localGetAll('transactions'));
+  };
+  onValue(r, handler, errHandler);
   _transactionListeners.push({ ref: r, handler });
   return () => off(r, 'value', handler);
 }
