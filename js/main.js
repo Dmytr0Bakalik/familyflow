@@ -162,6 +162,7 @@ function setupAppShell() {
   setupBottomNav();
   setupFAB();
   setupHeaderActions();
+  setupWeeklyReport();
 }
 
 function setupBottomNav() {
@@ -204,7 +205,6 @@ function setupHeaderActions() {
     renderAll();
     destroyCharts(); renderAllCharts();
     setupFilters();
-    setupWeeklyReport();
   });
 
   document.getElementById('appThemeToggle')?.addEventListener('click', () => {

@@ -323,10 +323,11 @@
   .fab        { right: calc(50% - 300px + 20px); }
 }
 
+/* 
 @media (min-width: 1024px) {
   #appShell { flex-direction: row; }
   .app-header { display: none; }
   .app-content { padding-bottom: 0; }
   .bottom-nav { display: none; }
-  /* Desktop sidebar could be added later */
 }
+*/
