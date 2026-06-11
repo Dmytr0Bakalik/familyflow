@@ -16,6 +16,7 @@ import { renderAllCharts, renderAnalyticsDashboard, destroyCharts } from './char
 import { renderCalendar, setupCalendar } from './calendar.js';
 import { exportAllCSV, exportCurrentMonthCSV, exportWeeklySummary, exportMonthlySummary } from './export.js';
 import { setupWeeklyReport, updateWeeklyReportIfActive } from './weekly-report.js';
+import { setDefaultAvatars } from './default-avatars.js';
 
 
 let _activeTab = 'home';
@@ -28,6 +29,9 @@ let _unsubscribeCats = null;
 async function bootstrap() {
   // Language
   setLang(localStorage.getItem('ff_lang') || 'ua');
+
+  // Set default avatars (lion/monkey/mama) for first-time users
+  setDefaultAvatars();
 
   setupLoginScreen();
   applyI18nById();
