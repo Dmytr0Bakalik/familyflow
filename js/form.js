@@ -30,12 +30,14 @@ let _selectedCategory = null;
 let _selectedColor = COLOR_PALETTE[0];
 let _selectedEmoji = '📁';
 let _selectedUserId = null; // null = use current user
+let _presetDate     = null; // Set when opening from calendar
 
 // ---- Open modal to add new ----
-export function openAddModal(defaultType = 'expense') {
+export function openAddModal(defaultType = 'expense', presetDate = null) {
   _editingId = null;
   _currentType = defaultType;
   _selectedCategory = null;
+  _presetDate = presetDate; // e.g. '2026-06-03' from calendar
   _renderModal();
 }
 
@@ -118,7 +120,7 @@ function _renderModal(tx = null) {
     <div class="form-group">
       <label class="form-label" data-i18n="add_date">${t('add_date')}</label>
       <input type="date" id="formDate" class="form-input"
-             value="${tx?.date || today}" max="${today}">
+             value="${tx?.date || _presetDate || today}" max="${today}">
     </div>
 
     <!-- Note -->

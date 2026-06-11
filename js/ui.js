@@ -267,6 +267,16 @@ function _txItemHTML(tx) {
   const user    = USERS.find(u => u.id === Number(tx.userId));
   const method  = tx.method === 'cash' ? '💵' : '💳';
 
+  // Day of week + date chip
+  let dayChip = '';
+  if (tx.date) {
+    const [dy, dm, dd] = tx.date.split('-');
+    const dateObj = new Date(Number(dy), Number(dm) - 1, Number(dd));
+    const dayNames = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+    const dayName = dayNames[dateObj.getDay()];
+    dayChip = `<span class="tx-day-chip">${dayName} ${Number(dd)}</span>`;
+  }
+
   return `
     <div class="tx-item" data-id="${tx.id}">
       <div class="tx-cat-icon" style="background:${color}22;color:${color}">${emoji}</div>
@@ -274,6 +284,7 @@ function _txItemHTML(tx) {
         <div class="tx-label">${label}</div>
         <div class="tx-meta">
           <span class="tx-user">${user?.avatar || ''} ${user?.name || ''}</span>
+          ${dayChip}
           <span class="tx-method">${method}</span>
           ${tx.note ? `<span class="tx-note">${tx.note}</span>` : ''}
         </div>

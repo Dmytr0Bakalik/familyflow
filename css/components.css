@@ -150,6 +150,15 @@
   color: var(--text-muted);
 }
 .tx-note { font-style: italic; }
+.tx-day-chip {
+  font-size: var(--text-xs);
+  font-weight: var(--fw-semibold);
+  color: var(--accent);
+  background: var(--accent-dim);
+  border-radius: 4px;
+  padding: 1px 5px;
+  letter-spacing: 0.2px;
+}
 
 .tx-right {
   display: flex;

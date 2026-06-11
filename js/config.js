@@ -94,6 +94,7 @@ export const SUBCATEGORIES = {
     { name: 'Apotheke',       emoji: '💊',                                        color: '#16A34A' },
     { name: 'Лікар',          emoji: '🩺',                                        color: '#0EA5E9' },
     { name: 'Аналізи',        emoji: '🔬',                                        color: '#8B5CF6' },
+    { name: 'Schwimmbad',     emoji: '🏊',                                        color: '#06B6D4' },
   ],
   housing: [
     { name: 'Оренда',         emoji: '🏠',  color: '#8B5CF6' },
