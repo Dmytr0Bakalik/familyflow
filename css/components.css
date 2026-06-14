@@ -1179,3 +1179,94 @@
   font-weight: var(--fw-semibold);
   color: var(--text-primary);
 }
+
+/* ============================================================
+   TASCHENGELD (Pocket Money)
+   ============================================================ */
+.tg-balance-badge {
+  font-size: var(--text-xl);
+  font-weight: var(--fw-extrabold);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+}
+.tg-balance-pos {
+  background: rgba(34,197,94,0.15);
+  color: var(--income-color);
+  border: 1.5px solid var(--income-color);
+}
+.tg-balance-neg {
+  background: rgba(244,63,94,0.12);
+  color: var(--expense-color);
+  border: 1.5px solid var(--expense-color);
+}
+.tg-settings-card {
+  padding: var(--space-4);
+  border: 1px dashed var(--border);
+}
+.tg-weeks-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.tg-week-card {
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  transition: all var(--transition);
+}
+.tg-week-this {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-dim);
+}
+.tg-week-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+.tg-payout-list {
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.tg-payout-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+  font-size: var(--text-sm);
+}
+.tg-payout-note {
+  flex: 1;
+  color: var(--text-secondary);
+}
+.tg-payout-amount {
+  font-weight: var(--fw-bold);
+  color: var(--expense-color);
+}
+.tg-del-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  transition: all var(--transition);
+}
+.tg-del-btn:hover { background: var(--expense-color); color: #fff; }
+.tg-add-payout {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  margin-top: var(--space-3);
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-3);
+  flex-wrap: wrap;
+}
+.tg-payout-input, .tg-payout-note-input {
+  font-size: var(--text-sm);
+}
+.tg-override-details {
+  margin-top: var(--space-2);
+}
+.tg-override-details summary:hover { color: var(--accent); }

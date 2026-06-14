@@ -17,6 +17,7 @@ import { renderCalendar, setupCalendar } from './calendar.js';
 import { exportAllCSV, exportCurrentMonthCSV, exportWeeklySummary, exportMonthlySummary } from './export.js';
 import { setupWeeklyReport, updateWeeklyReportIfActive } from './weekly-report.js';
 import { setDefaultAvatars } from './default-avatars.js';
+import { setupTaschengeld } from './taschengeld.js';
 
 
 let _activeTab = 'home';
@@ -193,6 +194,8 @@ function switchTab(tab) {
     setupCalendar(); renderCalendar();
   } else if (tab === 'settings') {
     renderSettings(); setupSettingsActions();
+  } else if (tab === 'taschengeld') {
+    setupTaschengeld();
   }
 }
 
