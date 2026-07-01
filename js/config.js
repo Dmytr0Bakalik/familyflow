@@ -75,7 +75,8 @@ export const SUBCATEGORIES = {
     { name: 'Netto',       logo: 'https://logo.clearbit.com/netto-online.de', color: '#E8BC00' },
     { name: 'Rewe',        logo: 'https://logo.clearbit.com/rewe.de',         color: '#CC0000' },
     { name: 'Penny',       logo: 'https://logo.clearbit.com/penny.de',        color: '#CC0000' },
-    { name: 'Türkischer',  emoji: '🫏',                                   color: '#C41E3A' },
+    { name: 'Mix Market',  emoji: '🌍',                                   color: '#16A34A' },
+    { name: 'Türkischer',  emoji: '🠯',                                   color: '#C41E3A' },
     { name: 'Restaurant',  emoji: '🍽️',                                   color: '#F59E0B' },
   ],
   online: [
@@ -126,17 +127,21 @@ export const SUBCATEGORIES = {
     { name: 'Amazon Prime', logo: 'https://logo.clearbit.com/amazon.de',      color: '#00A8E1' },
     { name: 'Apple',        logo: 'https://logo.clearbit.com/apple.com',      color: '#555555' },
     { name: 'ChatGPT',      logo: 'https://logo.clearbit.com/openai.com',     color: '#10A37F' },
+    { name: 'Claude',       emoji: '🧡',                                        color: '#CC7700' },
+    { name: 'Gemini',       emoji: '✨',                                        color: '#4285F4' },
+    { name: 'McFit',        logo: 'https://logo.clearbit.com/mcfit.com',      color: '#FF6600' },
+    { name: 'Barmenia',     logo: 'https://logo.clearbit.com/barmenia.de',    color: '#003DA5' },
     { name: 'Adobe',        logo: 'https://logo.clearbit.com/adobe.com',      color: '#FF0000' },
     { name: 'Інша',         emoji: '📦',                                         color: '#6366F1' },
   ],
   internet: [
-    { name: 'Інтернет',    emoji: '🌐', color: '#3B82F6' },
     { name: 'Телефон 1',  emoji: '📱', color: '#10B981' },
     { name: 'Телефон 2',  emoji: '📱', color: '#8B5CF6' },
     { name: 'A1',         logo: 'https://logo.clearbit.com/a1.net',     color: '#E30613' },
     { name: 'Magenta',    logo: 'https://logo.clearbit.com/magenta.at',  color: '#E20074' },
     { name: 'Drei',       logo: 'https://logo.clearbit.com/drei.at',     color: '#EE0033' },
     { name: 'Hutchison',  emoji: '📡',                                  color: '#FF6600' },
+    { name: 'Інтернет',    emoji: '🌐', color: '#3B82F6' },
   ],
 };
 
