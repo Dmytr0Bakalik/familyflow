@@ -3,7 +3,7 @@
 // ============================================================
 
 import { state, getMonthTransactions } from './state.js';
-import { formatAmount } from './config.js';
+import { formatAmount, escapeHtml } from './config.js';
 import { t, monthName } from './i18n.js';
 import { USERS } from './auth.js';
 import { openAddModal } from './form.js';
@@ -192,7 +192,7 @@ function renderWeekCalendar() {
         const isExp = tx.type === 'expense';
         return `<div class="week-tx">
           <span>${tx.categoryEmoji || (isExp ? '💸' : '💰')}</span>
-          <span class="week-tx-label">${tx.categoryLabel || tx.category || '—'}</span>
+          <span class="week-tx-label">${escapeHtml(tx.categoryLabel || tx.category || '—')}</span>
           <span class="week-tx-amt ${isExp ? 'text-expense' : 'text-income'}">${isExp ? '−' : '+'}${formatAmount(tx.amount)}</span>
         </div>`;
       }).join('');
@@ -242,8 +242,8 @@ function showDayModal(dateStr, txs) {
     return `<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
       <div style="width:36px;height:36px;border-radius:10px;background:${tx.categoryColor || '#94A3B8'}22;display:flex;align-items:center;justify-content:center;font-size:18px;">${tx.categoryEmoji || (isExp?'💸':'💰')}</div>
       <div style="flex:1">
-        <div style="font-weight:600;color:var(--text-primary)">${tx.categoryLabel || tx.category || '—'}</div>
-        <div style="font-size:12px;color:var(--text-muted)">${user?.avatar||''} ${user?.name||''} • ${tx.method==='cash'?'💵 Готівка':'💳 Картка'}${tx.note ? ' • ' + tx.note : ''}</div>
+        <div style="font-weight:600;color:var(--text-primary)">${escapeHtml(tx.categoryLabel || tx.category || '—')}</div>
+        <div style="font-size:12px;color:var(--text-muted)">${user?.avatar||''} ${user?.name||''} • ${tx.method==='cash'?'💵 Готівка':'💳 Картка'}${tx.note ? ' • ' + escapeHtml(tx.note) : ''}</div>
       </div>
       <div style="font-weight:700;color:${isExp?'var(--expense-color)':'var(--income-color)'}">
         ${isExp?'−':'+'}${formatAmount(tx.amount)}

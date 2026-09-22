@@ -4,7 +4,7 @@
 
 import { t } from './i18n.js';
 import { getCurrentUser } from './auth.js';
-import { USERS, getAllCategories, getCategoryById, COLOR_PALETTE, CURRENCY, getAvatarHTML, SUBCATEGORIES } from './config.js';
+import { USERS, getAllCategories, getCategoryById, COLOR_PALETTE, CURRENCY, getAvatarHTML, SUBCATEGORIES, escapeHtml } from './config.js';
 import { addTransaction, updateTransaction, saveCustomCategory } from './storage.js';
 import { showToast } from './ui.js';
 
@@ -203,7 +203,7 @@ function _renderCategoryGrid(selectedId) {
   _selectedCategory = selectedId || null;
 
   grid.innerHTML = cats.map(cat => {
-    const label = cat.labelKey ? t(cat.labelKey) : cat.label || cat.id;
+    const label = escapeHtml(cat.labelKey ? t(cat.labelKey) : cat.label || cat.id);
     const isSelected = cat.id === _selectedCategory;
     return `
       <button class="cat-chip ${isSelected ? 'selected' : ''}" 

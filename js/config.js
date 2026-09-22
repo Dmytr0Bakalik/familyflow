@@ -174,3 +174,15 @@ export const CURRENCY = '€';
 export function formatAmount(n) {
   return `${Number(n).toFixed(2).replace('.', ',')} €`;
 }
+
+// ---- HTML escaping ----
+// Any free text a user can type (transaction note, custom category label,
+// payout note) is stored in Firebase and later dropped into innerHTML when
+// rendering. Escape it first so it can't be used to inject markup/scripts.
+const _escapeEl = typeof document !== 'undefined' ? document.createElement('div') : null;
+export function escapeHtml(str) {
+  if (str == null) return '';
+  if (!_escapeEl) return String(str);
+  _escapeEl.textContent = String(str);
+  return _escapeEl.innerHTML;
+}

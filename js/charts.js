@@ -5,7 +5,7 @@
 import { state, getCurrentMonthTx, getExpensesByCategory,
          getTotalsByUser, getMonthTransactions } from './state.js';
 import { t } from './i18n.js';
-import { USERS, formatAmount } from './config.js';
+import { USERS, formatAmount, escapeHtml } from './config.js';
 
 let _donutChart    = null;
 let _memberChart   = null;
@@ -80,7 +80,7 @@ export function renderDonutChart() {
     legend.innerHTML = byCat.map(c => `
       <div class="legend-item">
         <span class="legend-dot" style="background:${c.color}"></span>
-        <span class="legend-label">${c.emoji} ${c.label}</span>
+        <span class="legend-label">${c.emoji} ${escapeHtml(c.label)}</span>
         <span class="legend-value">${formatAmount(c.amount)}</span>
         <span class="legend-pct">${total ? Math.round(c.amount / total * 100) : 0}%</span>
       </div>
@@ -413,7 +413,7 @@ export function renderFinancialLeaks() {
         <div class="an-leak-item">
           <div class="an-leak-icon" style="background:${c.color}22;color:${c.color}">${c.emoji}</div>
           <div class="an-leak-info">
-            <div class="an-leak-name">${c.label}</div>
+            <div class="an-leak-name">${escapeHtml(c.label)}</div>
             <div class="an-leak-bar-wrap">
               <div class="an-leak-bar" style="width:${pct}%;background:${c.color}"></div>
             </div>
@@ -456,7 +456,7 @@ export function renderInsights() {
   if (byCat.length > 0) {
     const top = byCat[0];
     const pct = curExp > 0 ? Math.round(top.amount / curExp * 100) : 0;
-    insights.push({ icon: top.emoji, text: `Найбільша стаття: ${top.label} — ${formatAmount(top.amount)} (${pct}% витрат)`, color: top.color });
+    insights.push({ icon: top.emoji, text: `Найбільша стаття: ${escapeHtml(top.label)} — ${formatAmount(top.amount)} (${pct}% витрат)`, color: top.color });
   }
 
   // Insight 3: Savings rate

@@ -3,8 +3,9 @@
 // ============================================================
 
 import { getCurrentUser } from './auth.js';
-import { formatAmount } from './config.js';
+import { formatAmount, escapeHtml } from './config.js';
 import { showToast } from './ui.js';
+import { closeModal } from './form.js';
 
 import { getDatabase, ref, set, onValue, off, push }
   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
@@ -226,7 +227,7 @@ function renderTaschengeld(data) {
             ${wPayouts.map(([pid, p]) => `
               <div class="tg-payout-item">
                 <span class="tg-payout-icon">💵</span>
-                <span class="tg-payout-note">${p.note || 'Готівка видана'}</span>
+                <span class="tg-payout-note">${escapeHtml(p.note) || 'Готівка видана'}</span>
                 <span class="tg-payout-amount">−${formatAmount(p.amount)}</span>
                 ${isDmytro
                   ? `<button class="tg-del-btn" data-pid="${pid}" data-week="${w.key}">✕</button>`
@@ -237,12 +238,10 @@ function renderTaschengeld(data) {
           <!-- Add payout (Dmytro only) -->
           ${isDmytro ? `
           <div class="tg-add-payout" data-week="${w.key}">
-            <input type="number" class="form-input tg-payout-input"
-                   placeholder="Сума" min="0" step="0.5"
-                   style="width:80px;text-align:center">
-            <input type="text" class="form-input tg-payout-note-inp"
-                   placeholder="Нотатка (опційно)" style="flex:1">
-            <button class="btn btn-secondary btn-sm tg-add-btn" data-week="${w.key}">💵 Видати</button>
+            <button class="btn btn-primary btn-full tg-payout-open-btn"
+                    data-week="${w.key}" data-default="${defaultAmount}">
+              💵 Видати кишенькові
+            </button>
           </div>
 
           <details class="tg-override-details">
@@ -284,19 +283,12 @@ function renderTaschengeld(data) {
     showToast('✅ Відлік починається з цього тижня');
   });
 
-  // Add payout
-  container.querySelectorAll('.tg-add-btn').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      const wrap  = btn.closest('.tg-add-payout');
-      const week  = btn.dataset.week;
-      const amtEl = wrap.querySelector('.tg-payout-input');
-      const noteEl= wrap.querySelector('.tg-payout-note-inp');
-      const amt   = parseFloat(amtEl?.value || '');
-      if (!amt || amt <= 0) { showToast('Введи суму!', 'error'); return; }
-      const newRef = push(ref(getDb(), `taschengeld/payouts/${week}`));
-      await set(newRef, { amount: amt, note: noteEl?.value?.trim() || '', ts: Date.now() });
-      showToast(`💵 Видано ${formatAmount(amt)}`);
-      amtEl.value = ''; noteEl.value = '';
+  // Open payout stepper modal
+  container.querySelectorAll('.tg-payout-open-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const week = btn.dataset.week;
+      const def  = Math.round(Number(btn.dataset.default) || DEFAULT_WEEKLY);
+      _openPayoutStepper(week, def);
     });
   });
 
@@ -320,4 +312,66 @@ function renderTaschengeld(data) {
       showToast(`✅ ${formatAmount(val)}€ для цього тижня`);
     });
   });
+}
+
+// ---- Payout stepper modal (press +/- or a preset chip, no typing) ----
+
+const PAYOUT_PRESETS = [5, 10, 12, 15, 20, 25];
+
+function _openPayoutStepper(week, startAmount) {
+  const backdrop = document.getElementById('modalBackdrop');
+  const body     = document.getElementById('modalBody');
+  const titleEl  = document.getElementById('modalTitle');
+  const saveBtn  = document.getElementById('modalSaveBtn');
+  if (!backdrop || !body || !saveBtn) return;
+
+  let val = Math.max(0, Math.round(startAmount) || DEFAULT_WEEKLY);
+
+  titleEl.textContent = '💵 Видати кишенькові';
+
+  body.innerHTML = `
+    <div class="stepper-wrap">
+      <div class="stepper-row">
+        <button type="button" class="stepper-btn" id="stepMinus" aria-label="Менше">−</button>
+        <div class="stepper-value" id="stepValue">${val} €</div>
+        <button type="button" class="stepper-btn" id="stepPlus" aria-label="Більше">+</button>
+      </div>
+      <div class="stepper-presets">
+        ${PAYOUT_PRESETS.map(v => `<button type="button" class="stepper-chip" data-v="${v}">${v}€</button>`).join('')}
+      </div>
+      <input type="text" id="stepNote" class="form-input" placeholder="Нотатка (опційно)" style="margin-top:var(--space-4)">
+    </div>
+  `;
+
+  const valueEl = document.getElementById('stepValue');
+  const render  = () => { valueEl.textContent = `${val} €`; };
+
+  document.getElementById('stepMinus').addEventListener('click', () => {
+    val = Math.max(0, val - 1);
+    render();
+  });
+  document.getElementById('stepPlus').addEventListener('click', () => {
+    val = val + 1;
+    render();
+  });
+  body.querySelectorAll('.stepper-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      val = Number(chip.dataset.v);
+      render();
+    });
+  });
+
+  const saveLabelEl = saveBtn.querySelector('span') || saveBtn;
+  saveLabelEl.textContent = 'Видати';
+  saveBtn.style.display = '';
+  saveBtn.onclick = async () => {
+    if (!val || val <= 0) { showToast('Обери суму!', 'error'); return; }
+    const note = document.getElementById('stepNote')?.value?.trim() || '';
+    const newRef = push(ref(getDb(), `taschengeld/payouts/${week}`));
+    await set(newRef, { amount: val, note, ts: Date.now() });
+    showToast(`💵 Видано ${formatAmount(val)}`);
+    closeModal();
+  };
+
+  backdrop.style.display = 'flex';
 }

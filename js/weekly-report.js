@@ -3,7 +3,7 @@
 // ============================================================
 
 import { state, getCurrentMonthTx, getExpensesByCategory } from './state.js';
-import { formatAmount } from './config.js';
+import { formatAmount, escapeHtml } from './config.js';
 import { USERS } from './auth.js';
 
 let _activeWeekIndex = -1; // -1 means "Total" (Загальний огляд)
@@ -117,7 +117,7 @@ function renderShortReportContent() {
       return `
         <div class="short-report-tx-item">
           <div class="short-report-tx-date">${t.date.split('-')[2]}</div>
-          <div class="short-report-tx-desc">${t.description || c.label}</div>
+          <div class="short-report-tx-desc">${escapeHtml(t.description || c.label)}</div>
           <div class="short-report-tx-who" style="background:${c.color}22;color:${c.color}">${user ? user.avatar : '👤'}</div>
           <div class="short-report-tx-amount">−${formatAmount(t.amount)}</div>
         </div>
@@ -129,7 +129,7 @@ function renderShortReportContent() {
         <div class="short-report-cat-item" style="cursor:pointer">
           <div class="short-report-cat-icon" style="background:${c.color}22;color:${c.color}">${c.emoji}</div>
           <div class="short-report-cat-info">
-            <div class="short-report-cat-name">${c.label}</div>
+            <div class="short-report-cat-name">${escapeHtml(c.label)}</div>
             <div class="short-report-cat-bar-wrap">
               <div class="short-report-cat-bar" style="width:${pct}%;background:${c.color}"></div>
             </div>

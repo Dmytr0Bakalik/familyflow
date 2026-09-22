@@ -6,7 +6,7 @@ import { t, monthName } from './i18n.js';
 import { getCurrentUser, USERS } from './auth.js';
 import { state, getCurrentMonthTx, getTotals, getTotalsByUser,
          getExpensesByCategory, applyFilters } from './state.js';
-import { formatAmount, getCategoryById, getAllCategories, getAvatarHTML } from './config.js';
+import { formatAmount, getCategoryById, getAllCategories, getAvatarHTML, escapeHtml } from './config.js';
 
 // lazy-import to avoid circular deps
 async function _getDeleteFn() {
@@ -262,7 +262,7 @@ function _txItemHTML(tx) {
   const cat     = getCategoryById(tx.category);
   const color   = tx.categoryColor || cat?.color   || '#94A3B8';
   const emoji   = tx.categoryEmoji || cat?.emoji   || '💸';
-  const label   = tx.categoryLabel || (cat?.labelKey ? t(cat.labelKey) : tx.category) || '—';
+  const label   = escapeHtml(tx.categoryLabel || (cat?.labelKey ? t(cat.labelKey) : tx.category) || '—');
   const isExp   = tx.type === 'expense';
   const user    = USERS.find(u => u.id === Number(tx.userId));
   const method  = tx.method === 'cash' ? '💵' : '💳';
@@ -286,7 +286,7 @@ function _txItemHTML(tx) {
           <span class="tx-user">${user?.avatar || ''} ${user?.name || ''}</span>
           ${dayChip}
           <span class="tx-method">${method}</span>
-          ${tx.note ? `<span class="tx-note">${tx.note}</span>` : ''}
+          ${tx.note ? `<span class="tx-note">${escapeHtml(tx.note)}</span>` : ''}
         </div>
       </div>
       <div class="tx-right">

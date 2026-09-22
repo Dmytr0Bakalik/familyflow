@@ -1270,3 +1270,64 @@
   margin-top: var(--space-2);
 }
 .tg-override-details summary:hover { color: var(--accent); }
+
+/* ---- Payout stepper (press +/- instead of typing) ---- */
+.stepper-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-2) 0;
+}
+.stepper-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+.stepper-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: #000;
+  font-size: 28px;
+  font-weight: var(--fw-bold);
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform var(--transition), opacity var(--transition);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.stepper-btn:active { transform: scale(0.92); }
+.stepper-value {
+  min-width: 110px;
+  text-align: center;
+  font-size: 40px;
+  font-weight: var(--fw-extrabold);
+  font-variant-numeric: tabular-nums;
+}
+.stepper-presets {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-5);
+}
+.stepper-chip {
+  padding: 8px 16px;
+  border-radius: var(--radius-full, 999px);
+  border: 1.5px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-weight: var(--fw-semibold);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.stepper-chip:hover, .stepper-chip:active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
