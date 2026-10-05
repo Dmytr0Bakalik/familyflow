@@ -9,8 +9,7 @@ import { setCustomCategories } from './config.js';
 import { initializeApp }                          from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getDatabase, ref, push, set, get,
          remove, update, onValue, off }           from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
-import { getAuth, signInAnonymously,
-         onAuthStateChanged }                     from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getAuth, signInAnonymously }             from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
 let app, db;
 let _connected = false;
@@ -22,16 +21,13 @@ let _transactionListeners = [];
 export async function initFirebase() {
   try {
     app = initializeApp(firebaseConfig);
-    db  = getDatabase(app);
     const auth = getAuth(app);
 
-    await new Promise((resolve, reject) => {
-      const unsub = onAuthStateChanged(auth, user => {
-        unsub();
-        resolve(user);
-      }, reject);
-      signInAnonymously(auth).catch(reject);
-    });
+    // Wait for any persisted session to be restored, then sign in only if
+    // there isn't one — otherwise DB listeners can start before auth is ready.
+    await auth.authStateReady();
+    if (!auth.currentUser) await signInAnonymously(auth);
+    db = getDatabase(app);
 
     _connected = true;
     console.log('[Firebase] Connected ✓ (anonymous auth)');

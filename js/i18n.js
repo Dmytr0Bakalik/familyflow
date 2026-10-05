@@ -117,6 +117,7 @@ export const TRANSLATIONS = {
     cat_subs: 'Підписки',
     cat_extra: 'Додаткові',
     cat_internet: 'Інтернет',
+    cat_car: 'Машина',
     // Categories — Income
     cat_salary: 'Зарплата',
     cat_sidejob: 'Підробіток',
@@ -244,6 +245,7 @@ export const TRANSLATIONS = {
     cat_misc: 'Kleinigkeiten',
     cat_clothes: 'Kleidung',
     cat_extra: 'Sonstiges',
+    cat_car: 'Auto',
     // Categories — Income
     cat_salary: 'Gehalt',
     cat_sidejob: 'Nebenjob',

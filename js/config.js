@@ -51,6 +51,7 @@ export const EXPENSE_CATEGORIES = [
   { id: 'clothes', labelKey: 'cat_clothes', emoji: '👕', color: '#EC4899', builtin: true },
   { id: 'subs',    labelKey: 'cat_subs',    emoji: '📡', color: '#8B5CF6', builtin: true },
   { id: 'internet',labelKey: 'cat_internet',emoji: '💻', color: '#6B7280', builtin: true },
+  { id: 'car',     labelKey: 'cat_car',     emoji: '🚗', color: '#0EA5E9', builtin: true },
 ];
 
 // ---- Built-in Income Categories ----
@@ -142,6 +143,13 @@ export const SUBCATEGORIES = {
     { name: 'Drei',       logo: 'https://logo.clearbit.com/drei.at',     color: '#EE0033' },
     { name: 'Hutchison',  emoji: '📡',                                  color: '#FF6600' },
     { name: 'Інтернет',    emoji: '🌐', color: '#3B82F6' },
+  ],
+  car: [
+    { name: 'Чистка',  emoji: '🧼', color: '#06B6D4' },
+    { name: 'Ремонт',  emoji: '🔧', color: '#94A3B8' },
+    { name: 'Масло',   emoji: '🛢️', color: '#F59E0B' },
+    { name: 'Бензин',  emoji: '⛽', color: '#EF4444' },
+    { name: 'Газ',     emoji: '🔥', color: '#F97316' },
   ],
 };
 
